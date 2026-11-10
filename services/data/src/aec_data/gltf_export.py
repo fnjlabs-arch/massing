@@ -277,7 +277,7 @@ def _build_gltf_doc(model: ifcopenshell.file, name: str, *, draco: bool = False,
         nodes.append(len(node_list) - 1)
 
     doc = {
-        "asset": {"version": "2.0", "generator": "Massing glTF export (ifcopenshell)"},
+        "asset": {"version": "2.0", "generator": "SadSha Build Pro glTF export (ifcopenshell)"},
         "scene": 0,
         "scenes": [{"name": name, "nodes": nodes}],
         "nodes": node_list,

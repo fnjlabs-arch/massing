@@ -33,7 +33,7 @@ def fetch_parcels(bbox: list[float] | None = None, owner: str | None = None) -> 
     """Fetch parcels from the licensed provider — raises until one is wired (never fabricates data)."""
     if not is_enabled():
         raise RuntimeError("Parcel data is not connected (set PARCEL_PROVIDER and wire a licensed "
-                           "provider). Massing screens parcels you supply; it does not ship parcel data.")
+                           "provider). SadSha Build Pro screens parcels you supply; it does not ship parcel data.")
     raise NotImplementedError(
         f"Parcel fetch runs against the configured provider '{provider()}'. Implement the provider "
         "query in your deployment to enable nationwide parcel/ownership/comps data.")

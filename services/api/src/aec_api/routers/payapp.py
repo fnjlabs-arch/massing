@@ -20,6 +20,6 @@ def lien_exposure(pid: str, db: Session = Depends(get_db), _: str = Depends(requ
 
 @router.get("/payments/status")
 def payments_status(_: str = Depends(current_user)):
-    """Whether payment disbursement is configured. Off by default — Massing never moves money itself;
+    """Whether payment disbursement is configured. Off by default — SadSha Build Pro never moves money itself;
     it tracks the pay-app/lien-waiver workflow and gates release on waiver coverage."""
     return payments_bridge.status()

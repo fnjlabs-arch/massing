@@ -422,8 +422,8 @@ with TestClient(app) as c:
     # concept renders — the AI render bridge is off by default; seed reviewable records so the panel populates
     mk_try("concept_render", {"title": "Street view — dusk", "style": "photoreal",
                               "prompt": "photoreal architectural rendering, a residential 12-storey building, dusk",
-                              "source": "reference", "notes": "Massing study — seed record (bridge off by default)."})
-    mk_try("concept_render", {"title": "Massing diagram", "style": "massing",
+                              "source": "reference", "notes": "SadSha Build Pro study — seed record (bridge off by default)."})
+    mk_try("concept_render", {"title": "SadSha Build Pro diagram", "style": "massing",
                               "prompt": "massing study, a residential 12-storey building, program: residential, amenity",
                               "source": "reference"})
 

@@ -62,7 +62,7 @@ GUID_OPTION = "StoreIFCGUID"
 
 
 def export_options():
-    """The named options for a Massing publish, as ``{name: "true"|"false"}``."""
+    """The named options for a SadSha Build Pro publish, as ``{name: "true"|"false"}``."""
     return dict(OPTIONS)
 
 

@@ -1,6 +1,6 @@
 """Capital-markets / syndication bridge — OPTIONAL, feature-flagged (off unless a platform URL + key set).
 
-Massing owns the fund data — the investor cap table, commitments, contributed/distributed positions and
+SadSha Build Pro owns the fund data — the investor cap table, commitments, contributed/distributed positions and
 the JV waterfall — and can serialize it to a neutral **syndication package** any time. Digital-securities
 issuance, KYC/AML, accredited-investor verification, subscription docs and the actual custody / transfer
 of funds live in a dedicated securitization platform. Rather than rebuild that regulated stack, this
@@ -9,7 +9,7 @@ platform over its REST API (stdlib urllib, no SDK).
 
 Scope guard — this connector **never moves money**. It syncs the *ledger* (positions, ownership %,
 contributed/distributed totals recorded elsewhere) so the external platform's investor records match
-Massing's. Capital calls, distributions and transfers are executed by the licensed platform, not here.
+SadSha Build Pro's. Capital calls, distributions and transfers are executed by the licensed platform, not here.
 
 The package export itself (`GET /projects/{pid}/securities/package`) is always available offline; this
 module is only the outbound push. A generic authenticated REST endpoint is implemented; named platforms
@@ -95,7 +95,7 @@ def syndication_payload(project_name: str, cap_table: dict, disclosures: dict | 
         },
         "positions": positions,
         "disclosures": disclosures or {},
-        "disclaimer": ("Positions and amounts reflect Massing's internal ledger and are informational. "
+        "disclaimer": ("Positions and amounts reflect SadSha Build Pro's internal ledger and are informational. "
                        "This package registers/updates investor records only; it does not instruct, "
                        "authorize, or execute any transfer of funds or securities."),
     }

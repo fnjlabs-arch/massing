@@ -313,7 +313,7 @@ def capabilities():
 
 @router.get("/license")
 def license_state():
-    """The Massing licence state — plan tier, per-tier feature entitlements, and whether a valid key
+    """The SadSha Build Pro licence state — plan tier, per-tier feature entitlements, and whether a valid key
     is recorded (key is masked, never returned in full). Drives the Settings licence panel."""
     from .. import licensing
     return licensing.state()

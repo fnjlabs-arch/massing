@@ -19,7 +19,7 @@ tiles. Good for a first look; not a trial of the platform.
 ## 1. Desktop app (one project at a time)
 
 Download a signed build for Windows, macOS or Linux from
-**[the latest release](https://github.com/ibuilder/massing/releases/latest)**. It auto-updates, is free,
+**[the latest release](https://github.com/fnjlabs-arch/massing/releases/latest)**. It auto-updates, is free,
 and carries its own local storage — no server to run. Single-project by design; if you need several
 projects or several people, use Docker.
 
@@ -28,7 +28,7 @@ projects or several people, use Docker.
 The complete platform: web app, API, Postgres, object storage.
 
 ```bash
-git clone https://github.com/ibuilder/massing.git && cd massing
+git clone https://github.com/fnjlabs-arch/massing.git && cd massing
 cp .env.example .env
 docker compose --profile full up --build
 ```

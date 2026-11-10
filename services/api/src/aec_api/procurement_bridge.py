@@ -20,7 +20,7 @@ def is_enabled() -> bool:
 def status() -> dict:
     if not is_enabled():
         return {"enabled": False, "provider": None,
-                "message": "RFQ dispatch is not configured. Massing levels quotes and 3-way-matches "
+                "message": "RFQ dispatch is not configured. SadSha Build Pro levels quotes and 3-way-matches "
                            "POs; to blast an RFQ to suppliers, set RFQ_PROVIDER and wire an email/EDI/"
                            "supplier-portal channel in your deployment."}
     return {"enabled": True, "provider": provider(),
@@ -31,7 +31,7 @@ def send_rfq(suppliers: list[str], items: list[dict]) -> dict:
     """Dispatch an RFQ — raises until a channel is wired (never pretends to have sent)."""
     if not is_enabled():
         raise RuntimeError("RFQ dispatch is not configured (set RFQ_PROVIDER and wire a supplier "
-                           "channel). Massing does not send on your behalf until that's provisioned.")
+                           "channel). SadSha Build Pro does not send on your behalf until that's provisioned.")
     raise NotImplementedError(
         f"RFQ to {len(suppliers)} supplier(s) for {len(items)} item(s) dispatches through the configured "
         f"channel '{provider()}'. Implement the provider send in your deployment to enable it.")

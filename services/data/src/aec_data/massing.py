@@ -57,7 +57,7 @@ def stamp_conformance(model: Any, name: str, *, view: str = "DesignTransferView_
         if not (fn.time_stamp or "").strip():
             from datetime import datetime, timezone
             fn.time_stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-        fn.originating_system = f"Massing (ifcopenshell {ifcopenshell.version})"
+        fn.originating_system = f"SadSha Build Pro (ifcopenshell {ifcopenshell.version})"
     except Exception:                                # noqa: BLE001
         pass
 
@@ -508,7 +508,7 @@ def _parking_storey(model, fac: _ElementFactory, building, fw, fd, n, parcel_pol
                        x, ry, STALL_W * 0.94, STALL_D * 0.94, "PARKING")
 
 
-def generate_ifc(metrics: dict, out_path: str, name: str = "Massing Study",
+def generate_ifc(metrics: dict, out_path: str, name: str = "SadSha Build Pro Study",
                  frame: bool = False, bay: float = 7.5, units: bool = False,
                  envelope: bool = False, wwr: float = 0.4, core: bool = False,
                  unit_layout: str = "grid", members: dict | None = None,

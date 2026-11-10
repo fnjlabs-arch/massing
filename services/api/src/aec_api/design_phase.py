@@ -26,7 +26,7 @@ PHASES: list[dict] = [
      "deliverables": ["Project brief / program", "EIR (Exchange Information Requirements)", "BEP", "Feasibility studies"]},
     {"order": 2, "riba": "2 Concept Design", "aia": "Schematic Design (SD)",
      "fee_pct": soft_costs.AE_PHASE_SPLIT["SD"] * 100, "iso": "S1 (Shared)",
-     "deliverables": ["Massing + concept model", "Design narrative", "Outline specs", "SD estimate (Class 4)"]},
+     "deliverables": ["SadSha Build Pro + concept model", "Design narrative", "Outline specs", "SD estimate (Class 4)"]},
     {"order": 3, "riba": "3 Spatial Coordination", "aia": "Design Development (DD)",
      "fee_pct": soft_costs.AE_PHASE_SPLIT["DD"] * 100, "iso": "S1 (Shared)",
      "deliverables": ["Coordinated architecture + structure + MEP", "Developed specs", "DD estimate (Class 3)", "Clash-free model"]},

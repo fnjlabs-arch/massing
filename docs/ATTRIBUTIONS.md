@@ -1,6 +1,6 @@
 # Third-party attributions
 
-Massing is built on open-source work. This file records third-party code or formats we have
+SadSha Build Pro is built on open-source work. This file records third-party code or formats we have
 re-implemented or adapted, beyond the dependencies pinned in `requirements.txt` / `package.json`.
 
 ## Lucide icons — vendored (ISC License)

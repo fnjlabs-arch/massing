@@ -275,7 +275,7 @@ def bcf_viewpoint_snapshot(pid: str, guid: str, vguid: str, db: Session = Depend
 # Same native rows, a second conformance mapping. What 3.0 adds over our 2.1 surface, and what we
 # therefore emit:
 #   * ``server_assigned_id`` — the server's own stable handle for a topic (ours is the row id, which
-#     is what every other Massing API addresses a topic by, so a BCF manager and our UI agree).
+#     is what every other SadSha Build Pro API addresses a topic by, so a BCF manager and our UI agree).
 #   * ``authorization`` — what THIS caller may do to the object, resolved from their project role,
 #     so a viewer-role integration greys out edit affordances instead of discovering a 403 on save.
 #   * **documents** — attachments over the API. BCF 3.0 models documents at project level with

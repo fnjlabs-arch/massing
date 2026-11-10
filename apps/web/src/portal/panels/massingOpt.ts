@@ -26,7 +26,7 @@ const FIELDS: Field[] = [
 
 export async function renderMassingOpt(ctx: PanelContext) {
   ctx.root.innerHTML = "";
-  ctx.root.appendChild(ctx.bar("🧮 Massing optioneer", () => { ctx.activeKey = null; void ctx.renderHome(); ctx.buildNav(); }));
+  ctx.root.appendChild(ctx.bar("🧮 SadSha Build Pro optioneer", () => { ctx.activeKey = null; void ctx.renderHome(); ctx.buildNav(); }));
 
   const body = document.createElement("div");
   ctx.root.appendChild(body);

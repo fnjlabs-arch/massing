@@ -1,4 +1,4 @@
-"""MCP server — exposes a Massing project/model to an MCP client (Claude Desktop, Cursor, an agent).
+"""MCP server — exposes a SadSha Build Pro project/model to an MCP client (Claude Desktop, Cursor, an agent).
 
 Run it over stdio and point an MCP client at it; the client can then read a project's snapshot, records,
 CDE / KPI / model-quality checks, run a standards-compliance check, and create an RFI — all against the

@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Massing",
+  "productName": "SadSha Build Pro",
   "version": "0.3.1143",
-  "identifier": "com.ibuilder.aecbim",
+  "identifier": "com.sadsha.buildpro",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
@@ -13,7 +13,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Massing",
+        "title": "SadSha Build Pro",
         "width": 1440,
         "height": 900,
         "minWidth": 900,
@@ -32,7 +32,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEE5OTIzMTFBOEQ5OTUyNTQKUldSVVVwbU5HakdTcVUzY2NpZVBVL0NNcmtQOEUzTVlwcUl0L1JXZnRuaFp0RkJ3L2czRUlvQmwK",
       "endpoints": [
-        "https://github.com/ibuilder/massing/releases/latest/download/latest.json"
+        "https://github.com/fnjlabs-arch/massing/releases/latest/download/latest.json"
       ]
     }
   },

@@ -6,7 +6,7 @@
 
 import { safeHref } from "./feedback";
 
-const REPO = "ibuilder/massing";
+const REPO = "fnjlabs-arch/massing";
 
 export function currentVersion(): string {
   return (import.meta.env.VITE_APP_VERSION as string | undefined) || "0.0.0";

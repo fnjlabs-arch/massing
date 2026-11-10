@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 __title__ = "Publish to\nMassing"
-__doc__ = """Export the active Revit model to IFC and publish it to Massing in one click — no paid
+__doc__ = """Export the active Revit model to IFC and publish it to SadSha Build Pro in one click — no paid
 Autodesk bridge. The model is converted to Fragments server-side; when it's ready you can open it in
-the Massing web viewer. Re-publishing the same project updates it.
+the SadSha Build Pro web viewer. Re-publishing the same project updates it.
 
-Configure the connection first via Massing > Settings."""
-__author__ = "Massing (massing.build)"
+Configure the connection first via SadSha Build Pro > Settings."""
+__author__ = "SadSha Build Pro (massing.build)"
 
 import os
 import tempfile
@@ -80,7 +80,7 @@ def _export_options():
     if not mx.guid_stability_ok(named):
         # refuse rather than publish a model that will silently re-key on the next export
         forms.alert("Export configuration would not preserve IFC GlobalIds. Publish cancelled.",
-                    title="Massing", warn_icon=True)
+                    title="SadSha Build Pro", warn_icon=True)
         script.exit()
     for key, value in sorted(named.items()):
         try:
@@ -105,10 +105,10 @@ if findings:
                       for f in findings)
     if not forms.alert("Model audit found conditions that degrade the exported IFC:\n\n{0}\n\n"
                        "Publish anyway?".format(lines),
-                       title="Massing — pre-publish audit", ok=False, yes=True, no=True):
+                       title="SadSha Build Pro — pre-publish audit", ok=False, yes=True, no=True):
         script.exit()
 
-with forms.ProgressBar(title="Publishing to Massing…", cancellable=False) as pb:
+with forms.ProgressBar(title="Publishing to SadSha Build Pro…", cancellable=False) as pb:
     try:
         # 1) export the active document to IFC (built-in Revit IFC exporter — free, no APS bridge)
         pb.update_progress(1, 5)
@@ -116,12 +116,12 @@ with forms.ProgressBar(title="Publishing to Massing…", cancellable=False) as p
         doc.Export(out_dir, project_name, _export_options())
         ifc_path = os.path.join(out_dir, project_name + ".ifc")
         if not os.path.exists(ifc_path):
-            forms.alert("Revit did not produce an IFC export.", title="Massing", warn_icon=True)
+            forms.alert("Revit did not produce an IFC export.", title="SadSha Build Pro", warn_icon=True)
             script.exit()
         with open(ifc_path, "rb") as fh:
             ifc_bytes = fh.read()
 
-        # 2) find or create the Massing project
+        # 2) find or create the SadSha Build Pro project
         pb.update_progress(2, 5)
         pid = client.find_or_create_project(project_name)
 
@@ -135,13 +135,13 @@ with forms.ProgressBar(title="Publishing to Massing…", cancellable=False) as p
 
         pb.update_progress(5, 5)
     except MassingError as e:
-        forms.alert("Publish failed:\n{0}".format(e), title="Massing", warn_icon=True)
+        forms.alert("Publish failed:\n{0}".format(e), title="SadSha Build Pro", warn_icon=True)
         script.exit()
 
 url = client.viewer_url(pid)
-output.print_md("# ✅ Published **{0}** to Massing".format(project_name))
+output.print_md("# ✅ Published **{0}** to SadSha Build Pro".format(project_name))
 output.print_md("{0:,} KB IFC uploaded and converted.".format(len(ifc_bytes) // 1024))
-output.print_md("[Open in Massing]({0})".format(url))
-if forms.alert("Published to Massing.\nOpen it in the web viewer now?", title="Massing",
+output.print_md("[Open in SadSha Build Pro]({0})".format(url))
+if forms.alert("Published to SadSha Build Pro.\nOpen it in the web viewer now?", title="SadSha Build Pro",
                ok=False, yes=True, no=True):
     script.open_url(url)

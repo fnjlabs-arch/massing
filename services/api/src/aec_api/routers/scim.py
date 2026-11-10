@@ -1,5 +1,5 @@
 """SCIM 2.0 provisioning (RFC 7643/7644) — lets an enterprise IdP (Okta, Azure AD/Entra, OneLogin,
-JumpCloud…) create, update, deactivate, and de-provision Massing accounts automatically as employees
+JumpCloud…) create, update, deactivate, and de-provision SadSha Build Pro accounts automatically as employees
 join / move / leave. Users provisioned here are SSO-only (a random password they never use); they
 sign in via OAuth/SAML. Deactivation (PATCH active=false or DELETE) blocks login *and* revokes any
 live token immediately by bumping the session watermark.

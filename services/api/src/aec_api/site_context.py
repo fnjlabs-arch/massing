@@ -131,7 +131,7 @@ def fetch(lat: float, lon: float, radius: float = 300.0, *,
     Raises RuntimeError with a friendly message on network/HTTP trouble."""
     # Overpass usage policy: identify the client (the default UA is rejected with 406)
     kwargs: dict[str, Any] = {"timeout": _TIMEOUT, "headers": {
-        "User-Agent": "Massing-BIM/0.3 (+https://massing.build; site-context layer)",
+        "User-Agent": "SadSha Build Pro-BIM/0.3 (+https://massing.build; site-context layer)",
         "Accept": "application/json"}}
     if transport is not None:
         kwargs["transport"] = transport

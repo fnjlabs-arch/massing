@@ -98,5 +98,5 @@ pub fn run() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running Massing");
+        .expect("error while running SadSha Build Pro");
 }

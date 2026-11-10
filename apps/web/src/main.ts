@@ -300,7 +300,7 @@ async function addParcelBoundaryFlow() {
       .parcel_boundary;
     const ring = b?.ring_m;
     if (!ring?.length) {
-      toast("No parcel boundary saved — load one on Feasibility → Massing first", "info", 6000);
+      toast("No parcel boundary saved — load one on Feasibility → SadSha Build Pro first", "info", 6000);
       return;
     }
     const gis = await import("./viewer/gis");
@@ -383,10 +383,10 @@ function showFreeImportHelp() {
     <p><b>IFC is the source of truth here</b> — you only need the paid Autodesk bridge if you want to
     drop a raw <code>.rvt</code> in directly. Three free ways in:</p>
     <ol style="margin:8px 0 8px 18px;line-height:1.5">
-      <li><b>One‑click — the Massing Revit add‑in (pyRevit):</b> install our free
-          <b>Massing for Revit</b> extension, then click <b>Massing ▸ Publish to Massing</b>. It exports
+      <li><b>One‑click — the SadSha Build Pro Revit add‑in (pyRevit):</b> install our free
+          <b>SadSha Build Pro for Revit</b> extension, then click <b>SadSha Build Pro ▸ Publish to SadSha Build Pro</b>. It exports
           IFC and publishes it here automatically — no manual export/upload. (Uses the REST API, so it
-          needs a <b>Commercial</b> licence; see Settings ▸ Massing licence.)</li>
+          needs a <b>Commercial</b> licence; see Settings ▸ SadSha Build Pro licence.)</li>
       <li><b>One model — Revit built‑in:</b> <i>File ▸ Export ▸ IFC</i>. Pick <b>IFC 4</b> (or IFC 2x3
           for older tools) and a coordinate base of <i>Project / Shared</i>, then <b>Open&nbsp;IFC…</b> here. Free on any plan.</li>
       <li><b>Many models / repeatable — pyRevit:</b> install <code>pyRevit</code> and batch‑export
@@ -398,7 +398,7 @@ function showFreeImportHelp() {
   const links = document.createElement("div");
   links.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-top:6px";
   for (const [t, href] of [
-    ["Massing for Revit add-in", "https://github.com/ibuilder/massing/tree/main/integrations/pyrevit"],
+    ["SadSha Build Pro for Revit add-in", "https://github.com/fnjlabs-arch/massing/tree/main/integrations/pyrevit"],
     ["pyRevit (free)", "https://github.com/pyrevitlabs/pyRevit"],
     ["Revit IFC export docs", "https://help.autodesk.com/view/RVT/2024/ENU/?guid=GUID-6708CFD6-0AD7-4D85-8479-A2A8657C9181"],
   ] as const) {
@@ -1677,7 +1677,7 @@ function settingsModal() {
     badges.append(badge("AI assist", cap.ai), badge("Email digests", cap.email),
       badge(`SSO${cap.sso.length ? " (" + cap.sso.join(", ") + ")" : ""}`, cap.sso.length > 0));
   }).catch(() => { badges.textContent = ""; });
-  // Massing licence — plan tier + what it unlocks (everyone can see; admins enter the key below)
+  // SadSha Build Pro licence — plan tier + what it unlocks (everyone can see; admins enter the key below)
   const lic = document.createElement("div"); lic.className = "meta"; lic.style.cssText = "margin-top:8px;font-size:12px";
   lic.textContent = "checking licence…"; about.appendChild(lic);
   const licFilled = api.license().then((l) => {
@@ -1722,7 +1722,7 @@ function settingsModal() {
   void Promise.allSettled([capsFilled, licFilled]).finally(ready);
   const credit = document.createElement("div");
   credit.className = "meta"; credit.style.cssText = "margin-top:8px;font-size:11px";
-  credit.innerHTML = `Massing <b>v${currentVersion()}</b> — created by <b>Matthew M. Emma</b>, built with Claude Code as AI assistant.`;
+  credit.innerHTML = `SadSha Build Pro <b>v${currentVersion()}</b> — created by <b>SadSha</b>, built with Claude Code as AI assistant.`;
   about.appendChild(credit);
   const upRow = document.createElement("div"); upRow.style.cssText = "margin-top:6px;display:flex;gap:8px;align-items:center";
   const upBtn = document.createElement("button"); upBtn.className = "tool-btn"; upBtn.textContent = "Check for updates";

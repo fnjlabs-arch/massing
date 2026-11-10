@@ -1,4 +1,4 @@
-# Massing plugins — server-side authoring recipes
+# SadSha Build Pro plugins — server-side authoring recipes
 
 A plugin adds **namespaced, GUID-stable authoring recipes** to the platform. Once loaded, a plugin
 recipe (`<plugin>.<recipe>`) is drivable from every authoring surface — `POST /projects/{pid}/edit`,

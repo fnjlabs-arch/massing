@@ -17,7 +17,7 @@ nowhere**, so the thing that was supposed to be evidence could be supplied by an
 ② `licensing.TIER_FEATURES` has marked `sso` Enterprise-only since the tiers were written and the
    Settings panel renders that table, but no code consulted it: any tier that configured a SAML IdP
    got SSO. Meanwhile upgrade messaging came from a hand-kept second copy of the matrix that listed
-   only the openBIM formats, so every Home-tier export refusal read "requires the Massing a higher
+   only the openBIM formats, so every Home-tier export refusal read "requires the SadSha Build Pro a higher
    plan (or higher)".
 
 The recurring lesson, for the third time this phase: **a duplicated derivation is where the
@@ -161,8 +161,8 @@ _enf, _cur = licensing.enforcement_enabled, licensing.current_tier
 licensing.enforcement_enabled, licensing.current_tier = (lambda: True), (lambda: "free")
 try:
     from fastapi import HTTPException
-    for fmt, want in [("png", "Massing Home plan"), ("ifc", "Massing Commercial plan"),
-                      ("ifcx", "Massing Commercial plan")]:
+    for fmt, want in [("png", "SadSha Build Pro Home plan"), ("ifc", "SadSha Build Pro Commercial plan"),
+                      ("ifcx", "SadSha Build Pro Commercial plan")]:
         try:
             licensing.require_export(fmt)
             raise AssertionError(f"{fmt} must be refused on free with enforcement on")
@@ -172,7 +172,7 @@ try:
     # The population is EVERY declared format and EVERY declared boolean entitlement, and the property
     # is the RENDERED refusal — not that the derivation agrees with the list it reads, which it cannot
     # fail to do. Asserting the message is what catches the original defect: the old dict listed only
-    # the openBIM formats and the other six rendered "the Massing a higher plan (or higher)".
+    # the openBIM formats and the other six rendered "the SadSha Build Pro a higher plan (or higher)".
     every_fmt = {f for feats in licensing.TIER_FEATURES.values() for f in feats["exports"]}
     # Anti-vacuity: the loop below proves nothing over an empty set. **Not a fixed floor** — that is
     # what this was, and it moved twice in two releases (9 → 8 → 7) as `nwd`, `obj` and `rvt` were
@@ -187,7 +187,7 @@ try:
             raise AssertionError(f"{fmt} must be refused on free with enforcement on")
         except HTTPException as e:
             check("a higher plan (or higher)" not in e.detail, f"{fmt} names no plan: {e.detail}")
-            check(any(f"Massing {lab} plan" in e.detail for lab in licensing.TIER_LABEL.values()),
+            check(any(f"SadSha Build Pro {lab} plan" in e.detail for lab in licensing.TIER_LABEL.values()),
                   f"{fmt} must name a real plan: {e.detail}")
     every_feat = {k for feats in licensing.TIER_FEATURES.values()
                   for k, on in feats.items() if k != "exports" and on}
@@ -196,18 +196,18 @@ try:
             licensing.require(feat)
             raise AssertionError(f"{feat} must be refused on free with enforcement on")
         except HTTPException as e:
-            check(any(f"Massing {lab} plan" in e.detail for lab in licensing.TIER_LABEL.values()),
+            check(any(f"SadSha Build Pro {lab} plan" in e.detail for lab in licensing.TIER_LABEL.values()),
                   f"{feat} must name a real plan: {e.detail}")
     try:
         licensing.require_export("step")
         raise AssertionError("step must be refused")
     except HTTPException as e:
-        check("not included on any Massing plan" in e.detail, e.detail)
+        check("not included on any SadSha Build Pro plan" in e.detail, e.detail)
     try:
         licensing.require("sso", "SAML single sign-on")
         raise AssertionError("sso must be refused on free")
     except HTTPException as e:
-        check("SAML single sign-on requires the Massing Enterprise plan" in e.detail, e.detail)
+        check("SAML single sign-on requires the SadSha Build Pro Enterprise plan" in e.detail, e.detail)
 finally:
     licensing.enforcement_enabled, licensing.current_tier = _enf, _cur
 
@@ -269,5 +269,5 @@ check("saml.is_available" in adv and "saml.is_enabled" not in adv,
 print(f"R37-CONTRACT OK — {checks} checks. An empty dict no longer scores 100% provenance coverage; "
       "a source_type with no source no longer out-ranks a complete citation; malformed citations are "
       "counted and named rather than silently credited. Upgrade messaging is derived from "
-      "TIER_FEATURES, so no export refusal reads 'the Massing a higher plan (or higher)'; the sso "
+      "TIER_FEATURES, so no export refusal reads 'the SadSha Build Pro a higher plan (or higher)'; the sso "
       "entitlement gates the SAML routes AND the button that advertises them.")

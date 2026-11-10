@@ -4,7 +4,7 @@ milestone cost **drift**, and the gap between the latest estimate and the projec
 read-side aggregation over the `estimate_set` module; no writes. Mirrors the other analytics engines.
 
 This is the "are we still tracking to budget as the design evolves?" view — the preconstruction
-discipline Concntric centers on, built on Massing's existing estimate/budget primitives."""
+discipline Concntric centers on, built on SadSha Build Pro's existing estimate/budget primitives."""
 from __future__ import annotations
 
 from typing import Any

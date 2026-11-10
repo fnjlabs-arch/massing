@@ -131,7 +131,7 @@ def emit_recipes(scenario: dict, base: dict) -> dict[str, Any]:
     return {
         "option": scenario.get("id"), "floors": floors, "floor_to_floor": round(f2f, 2),
         "plate_m2": round(plate, 1), "plate_side_m": side, "core_side_m": cside,
-        "bootstrap": {"name": f"Massing {scenario.get('id') or 'option'}", "storeys": floors,
+        "bootstrap": {"name": f"SadSha Build Pro {scenario.get('id') or 'option'}", "storeys": floors,
                       "storey_height": round(f2f, 2), "ground_size": round(max(30.0, side * 1.5), 1)},
         "steps": steps, "step_count": len(steps),
         "note": "Author this option: create the blank model from `bootstrap` (levels at the option's "

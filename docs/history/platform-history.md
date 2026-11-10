@@ -1,6 +1,6 @@
 # Platform history
 
-A narrative summary of how Massing filled out, by release band, plus the gallery of generated output.
+A narrative summary of how SadSha Build Pro filled out, by release band, plus the gallery of generated output.
 Moved here from the README on 2026-07-29, where 245 lines of release narrative had accumulated ahead of
 the sections a new reader actually needs.
 

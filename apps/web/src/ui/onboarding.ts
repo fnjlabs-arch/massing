@@ -58,7 +58,7 @@ export function showWelcome(ctx: OnboardCtx): void {
   card.style.cssText = "background:var(--panel);border:1px solid var(--line);border-radius:14px;"
     + "padding:26px;max-width:680px;width:100%;display:flex;flex-direction:column;gap:6px;box-shadow:0 18px 60px #000a";
   card.innerHTML =
-    `<div style="font-size:22px;font-weight:650;letter-spacing:-.01em">Welcome to Massing 👋</div>`
+    `<div style="font-size:22px;font-weight:650;letter-spacing:-.01em">Welcome to SadSha Build Pro 👋</div>`
     + `<div class="meta" style="margin-bottom:14px">A BIM viewer, a general-contracting portal, and a development`
     + ` proforma — one model, acquisition to turnover. Pick a starting point:</div>`;
 
@@ -152,7 +152,7 @@ export function maybeRolePrompt(opts: {
   card.style.cssText = "background:var(--panel);border:1px solid var(--line);border-radius:14px;"
     + "padding:22px;max-width:440px;width:100%;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 60px #000a";
   card.innerHTML = `<div style="font-size:17px;font-weight:650">What's your role?</div>`
-    + `<div class="meta" style="font-size:12.5px">Massing tailors the workspaces and tools to how you `
+    + `<div class="meta" style="font-size:12.5px">SadSha Build Pro tailors the workspaces and tools to how you `
     + `work. You can change this any time from the role picker (top right).</div>`;
   const list = document.createElement("div");
   list.style.cssText = "display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto";

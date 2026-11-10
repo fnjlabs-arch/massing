@@ -52,10 +52,10 @@ LEGACY_EXTENSION = ".mmproj"
 #: What every reader needs in order to make sense of the container without our code. Written into
 #: the zip itself, because documentation that lives in a repository is documentation the person
 #: holding the file does not have.
-README = """This is a Massing project container (.mass) — a plain ZIP archive.
+README = """This is a SadSha Build Pro project container (.mass) — a plain ZIP archive.
 
 Everything inside is either JSON (UTF-8) or a standard AEC file format. There is no proprietary
-encoding anywhere in this container, and you do not need Massing to read it.
+encoding anywhere in this container, and you do not need SadSha Build Pro to read it.
 
   manifest.json      What this container is: format id, version, when it was written, an inventory
                      of every entry, and `excluded` — what was deliberately NOT included.
@@ -411,7 +411,7 @@ def import_bundle(db: Session, data: bytes, *, new_name: str | None = None) -> s
         raise HTTPException(400,
                             f"this container was written by a newer build (format version {ver}; "
                             f"this build reads up to {VERSION}). Refusing rather than importing it "
-                            "partially — update Massing and try again.")
+                            "partially — update SadSha Build Pro and try again.")
     proj = json.loads(z.read("project.json"))
 
     new_pid = uuid.uuid4().hex

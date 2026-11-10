@@ -1,6 +1,6 @@
 # Credits
 
-Massing is built on open-source work. This page exists because we turned off one library's in-app
+SadSha Build Pro is built on open-source work. This page exists because we turned off one library's in-app
 attribution mark, and an attribution you remove from the screen you owe somewhere else.
 
 ## That Open Company — the viewer stack
@@ -20,7 +20,7 @@ this case. The docs also ask you to consider leaving it on, because the mark is 
 free stack gets found. That is a fair ask, and this page is the answer to it: the credit moved, it
 did not vanish.
 
-If you build on Massing, or on this stack directly, go and look at what they publish. It is
+If you build on SadSha Build Pro, or on this stack directly, go and look at what they publish. It is
 genuinely good engineering and it is given away.
 
 ## Also relied on

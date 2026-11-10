@@ -1,6 +1,6 @@
 # Family content — the type library and the external pack shelf
 
-Massing places **types** (`IfcTypeProduct`), not meshes. A family is an IFC type carrying a mapped
+SadSha Build Pro places **types** (`IfcTypeProduct`), not meshes. A family is an IFC type carrying a mapped
 representation; `place_type` instances occurrences that share that representation, which is why a
 type edit propagates to every placed occurrence at once and stays GUID-stable.
 

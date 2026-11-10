@@ -173,7 +173,7 @@ export function renderMassingTab(root: HTMLElement, ctx: MassingTabCtx): void {
   host.appendChild(pkWrap);
 
   const params = (): MassingParams => {
-    const p: MassingParams = { use_type: useSel.value as "residential" | "commercial", name: "Massing Study" };
+    const p: MassingParams = { use_type: useSel.value as "residential" | "commercial", name: "SadSha Build Pro Study" };
     for (const [, key] of fields) {
       const inp = inputs[key]; if (!inp) continue;
       const v = parseFloat(inp.value);

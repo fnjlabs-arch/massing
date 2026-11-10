@@ -96,7 +96,7 @@ def test_group(group: str) -> dict:
         return _test_speckle()
     if g.startswith("autodesk aps"):
         return _test_aps()
-    if g.startswith("massing licence"):
+    if g.startswith("sadsha build pro licence"):
         return _test_license()
     if g.startswith("portfolio resource grouping"):
         return _test_resource_groups()

@@ -48,7 +48,7 @@ LIBRARY_DIR = (_ROOT / "services" / "data" / "families") if _ROOT else None
 LIBRARY_PATH = (LIBRARY_DIR / "library.ifc") if LIBRARY_DIR else None
 
 
-def build_model(name: str = "Massing Family Library") -> ifcopenshell.file:
+def build_model(name: str = "SadSha Build Pro Family Library") -> ifcopenshell.file:
     """A minimal IFC4 project with a Body context, then every catalog family as a typed product."""
     model = ifcopenshell.api.run("project.create_file", version="IFC4")
     ifcopenshell.api.run("root.create_entity", model, ifc_class="IfcProject", name=name)

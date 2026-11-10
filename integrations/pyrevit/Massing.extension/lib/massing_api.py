@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Massing REST client for the pyRevit bridge — std-lib only (works on pyRevit's IronPython 2.7
-*and* CPython 3 engines; no `requests` dependency). Talks to a Massing API with an AEC_API_KEY
+"""SadSha Build Pro REST client for the pyRevit bridge — std-lib only (works on pyRevit's IronPython 2.7
+*and* CPython 3 engines; no `requests` dependency). Talks to a SadSha Build Pro API with an AEC_API_KEY
 bearer token: find/create a project, upload the model's IFC, kick + poll the Fragments publish,
 and round-trip BCF issues. The HTTP transport is injectable so the flow is unit-testable.
 
-Author: Massing (massing.build) — free, open Revit -> Massing bridge (no paid APS bridge needed).
+Author: SadSha Build Pro (massing.build) — free, open Revit -> SadSha Build Pro bridge (no paid APS bridge needed).
 """
 import json
 import time
@@ -42,13 +42,13 @@ def build_multipart(field, filename, data):
 
 
 class MassingClient(object):
-    """Thin Massing API client. `app_url` is the web viewer origin (for deep links); defaults to
+    """Thin SadSha Build Pro API client. `app_url` is the web viewer origin (for deep links); defaults to
     `base_url` when not given. `transport(method, url, headers, body) -> (status, bytes)` is
     overridable for tests."""
 
     def __init__(self, base_url, api_key, app_url=None, transport=None, timeout=120):
         if not base_url:
-            raise MassingError("Massing API URL is not set — configure it in the Massing > Settings button.")
+            raise MassingError("SadSha Build Pro API URL is not set — configure it in the SadSha Build Pro > Settings button.")
         self.base = base_url.rstrip("/")
         self.app_url = (app_url or base_url).rstrip("/")
         self.key = api_key or ""
@@ -73,7 +73,7 @@ class MassingClient(object):
         except HTTPError as e:
             return e.code, e.read()
         except URLError as e:
-            raise MassingError("cannot reach Massing at %s (%s)" % (self.base, e))
+            raise MassingError("cannot reach SadSha Build Pro at %s (%s)" % (self.base, e))
 
     def _json(self, method, path, payload=None):
         headers = self._headers()

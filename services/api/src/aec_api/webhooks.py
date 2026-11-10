@@ -85,11 +85,11 @@ def _allow_private() -> bool:
 def _send(url: str, body: bytes) -> int:
     """POST `body` to `url`, HMAC-signing it when a secret is set. Returns the HTTP status."""
     ts = str(int(time.time()))
-    headers = {"Content-Type": "application/json", "User-Agent": "Massing-Webhook",
-               "X-Massing-Event-Timestamp": ts}
+    headers = {"Content-Type": "application/json", "User-Agent": "SadSha Build Pro-Webhook",
+               "X-SadSha Build Pro-Event-Timestamp": ts}
     sig = _sign(ts, body)
     if sig:
-        headers["X-Massing-Signature"] = sig
+        headers["X-SadSha Build Pro-Signature"] = sig
     req = urllib.request.Request(url, data=body, method="POST", headers=headers)
     timeout = float(os.environ.get("AEC_WEBHOOK_TIMEOUT", "3"))
     # SEC: safe_urlopen re-validates every redirect hop, not just this URL (SSRF via 302).

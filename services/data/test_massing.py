@@ -87,7 +87,7 @@ if _have_ifc:
     from aec_data.ifc_loader import open_model
     fd, path = tempfile.mkstemp(suffix=".ifc"); os.close(fd)
     try:
-        massing.generate_ifc(m, path, name="Test Massing")
+        massing.generate_ifc(m, path, name="Test SadSha Build Pro")
         model = open_model(path)
         storeys = model.by_type("IfcBuildingStorey")
         spaces = model.by_type("IfcSpace")

@@ -63,7 +63,7 @@ def verify(secret_b32: str, code: str, window: int = 1, when: float | None = Non
         return False
 
 
-def provisioning_uri(secret_b32: str, account: str, issuer: str = "Massing") -> str:
+def provisioning_uri(secret_b32: str, account: str, issuer: str = "SadSha Build Pro") -> str:
     """otpauth:// URI for authenticator apps / QR codes (RFC / Key-Uri-Format)."""
     from urllib.parse import quote
     label = quote(f"{issuer}:{account}")

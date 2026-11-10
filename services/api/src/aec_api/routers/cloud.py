@@ -391,7 +391,7 @@ def _library_token(db: Session, user: str) -> str:
     link = _linked_or_403(db, user)
     tier = cloud.normalize_tier(link.cloud_tier)
     if not cloud.has_library_access(tier):
-        raise HTTPException(402, "the cloud project library is included with any paid Massing plan — "
+        raise HTTPException(402, "the cloud project library is included with any paid SadSha Build Pro plan — "
                                  f"upgrade at {cloud.site_url()}/pricing/")
     return _fresh_access_token(db, link)
 

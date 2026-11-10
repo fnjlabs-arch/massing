@@ -1,15 +1,15 @@
 ---
 name: massing-bim
 description: >-
-  Drive a Massing BIM/AEC project from an AI agent over MCP — read a project's status, records, CDE,
+  Drive a SadSha Build Pro BIM/AEC project from an AI agent over MCP — read a project's status, records, CDE,
   KPI and model-quality checks; run standards-compliance, schedule-risk, embodied-carbon, permit-
   readiness and drawing-QA analyses; author the IFC model with GUID-stable recipes; and draft RFIs.
-  Use when the user asks to inspect, analyse, or author a Massing project through Claude.
+  Use when the user asks to inspect, analyse, or author a SadSha Build Pro project through Claude.
 ---
 
-# Massing over MCP
+# SadSha Build Pro over MCP
 
-Massing exposes an offline-first [MCP](https://modelcontextprotocol.io) server (`services/api/mcp_server.py`)
+SadSha Build Pro exposes an offline-first [MCP](https://modelcontextprotocol.io) server (`services/api/mcp_server.py`)
 that lets you drive a real project through the **same engines the web UI and HTTP API use** — every read
 is grounded in the project's own data and every write goes through the identical validation, guardrail,
 and audit path. You never guess from memory; you call a tool and report what it returns.

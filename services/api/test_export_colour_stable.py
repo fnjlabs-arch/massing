@@ -10,7 +10,7 @@ Measured before the fix, `IfcWall` across three runs: green, magenta, green-cyan
 **Why this suite spawns a subprocess.** Within one interpreter `hash()` is perfectly consistent, so an
 ordinary same-process assertion passes on the broken code. The bug lives entirely in the gap between
 processes, and a test that cannot cross that gap is structurally unable to see it — which is how this
-survived. Found by the Massing Security session while auditing every `hash()` in the tree after the
+survived. Found by the SadSha Build Pro Security session while auditing every `hash()` in the tree after the
 same defect class turned up in `pid_lock`.
 
 Run: PYTHONPATH="src;../data/src" ./.venv/Scripts/python.exe test_export_colour_stable.py

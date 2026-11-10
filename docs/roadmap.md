@@ -2575,7 +2575,7 @@ instances:
 
   `POST …/env/wind` has graded pedestrian wind comfort since ENV-1 — corner acceleration, downwash
   and channelling against the Lawson categories, offline and deterministic, deriving the mass from
-  the model's bounding box when no dimensions are given. **Nothing called it.** Massing decides most
+  the model's bounding box when no dimensions are given. **Nothing called it.** SadSha Build Pro decides most
   pedestrian wind outcomes and CFD arrives far too late to steer them; an answer only `curl` can
   reach is not an answer the design has. It now draws under **📐 Design Metrics**, which is the panel
   that already answers "what is this massing doing" off the same model.
@@ -4642,7 +4642,7 @@ These are the gaps between what the platform draws today and what that package c
 
 **The finding that orders this ring:** across every platform scanned — agent bureaus, procurement AI,
 document intelligence, field capture, ERP, and the category leader's twenty-agent library — **not one
-competitor's AI touches geometry.** They all read documents *about* the building. Massing's agents can
+competitor's AI touches geometry.** They all read documents *about* the building. SadSha Build Pro's agents can
 read the building. Items marked ⭐ are the ones that convert that into product; the rest are table
 stakes we are missing.
 
@@ -5642,7 +5642,7 @@ offline/field path trustworthy on one bar of signal, judged from a phone rather 
 
 Four sessions are live in this repo. R24 is **`apps/web` outside `src/shell/`**. Specifically:
 
-- **Owned elsewhere, do not edit:** `apps/web/src/shell/*` (Massing Core session). **`services/api` +
+- **Owned elsewhere, do not edit:** `apps/web/src/shell/*` (SadSha Build Pro Core session). **`services/api` +
   `services/data`** carried six backend PRs; **#94 #95 #96 #97 #99 merged** on 2026-07-29 (by the
   user, not by an agent), **#98 R23-RECIPE-ARTIFACT** open, plus **#100** fixing the alert below.
   *Status stated with its method rather than its conclusion, which is the habit worth copying:*

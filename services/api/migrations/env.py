@@ -1,4 +1,4 @@
-"""Alembic environment for the Massing API.
+"""Alembic environment for the SadSha Build Pro API.
 
 Builds the COMPLETE target metadata the same way the app does at startup: the static ORM models
 (``aec_api.models``) plus the config-driven dynamic module tables (``mod_<key>``, one per

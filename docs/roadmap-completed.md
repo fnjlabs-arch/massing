@@ -528,7 +528,7 @@ per-GlobalId AABB cross-check against the ifcopenshell path.
   `/assets/` and `/wasm/`, each declaring `Cache-Control` — so all **seven** security headers
   vanish from exactly the responses where MIME sniffing matters most. Only `location = /index.html`
   repeats the set. Found while reviewing the first outside contribution
-  ([#311](https://github.com/ibuilder/massing/pull/311)), which correctly identified the trap and
+  ([#311](https://github.com/fnjlabs-arch/massing/pull/311)), which correctly identified the trap and
   restored **2 of 7** headers on **1 of 3** locations — its accompanying test then froze that
   partial state as correct by special-casing `Cross-Origin-*` to three scopes and everything else to
   two. Take the contribution, then finish it: the gate should **derive** the locations that declare
@@ -553,8 +553,8 @@ per-GlobalId AABB cross-check against the ifcopenshell path.
   of the same thing. *Original finding:*  **a Docker-action bump could not be verified before it landed.**
   `Container build + scan + publish` is gated `if: github.event_name == 'push' && github.ref ==
   'refs/heads/main'`, so it reports **`skipping`** on every PR and *structurally cannot* run on one.
-  Dependabot's [#276](https://github.com/ibuilder/massing/pull/276) (`build-push-action` 6→7) and
-  [#279](https://github.com/ibuilder/massing/pull/279) (`setup-buildx-action` 3→4) both showed
+  Dependabot's [#276](https://github.com/fnjlabs-arch/massing/pull/276) (`build-push-action` 6→7) and
+  [#279](https://github.com/fnjlabs-arch/massing/pull/279) (`setup-buildx-action` 3→4) both showed
   all-green — a 21-minute API gate, a web build, CodeQL — and **not one of those greens exercised
   the thing that changed.** A break lands directly on `main`. Wanted: a build-only, no-push
   container job on PRs touching `**/Dockerfile` or `.github/workflows/ci.yml`. *Until it exists,
@@ -2403,7 +2403,7 @@ optional mirror. We already have proforma, JV waterfall, LP portal, capital call
 
 **DECISION (revised) — integrate, don't build.** We will **not** build the securities/compliance stack
 ourselves (KYC/accreditation, transfer-agent recordkeeping, Reg-D compliance engine, escrow, the token) —
-that is licensed, counsel-gated, multi-year work and outside our risk appetite. Instead Massing stays the
+that is licensed, counsel-gated, multi-year work and outside our risk appetite. Instead SadSha Build Pro stays the
 **origination front-end** (the deal, the IFC model, the proforma, the JV waterfall, a read-only cap-table
 view) and **hands the regulated pieces to a licensed platform via API** — the same "connectors OK, we
 never move money" posture as our Procore / QuickBooks bridges. Confirmed integration path: **a licensed
@@ -2419,7 +2419,7 @@ advice; the partner is the licensed entity.*
 **Sequencing recommendation:** ① and ② are the near-term, highest-leverage, lowest-risk builds (both pure
 software on existing seams). ③–⑥ are self-contained increments to schedule by customer pull. ⑦ is now a
 **lightweight integration** (a licensed-securities-platform connector) rather than a build — pursue only
-when a customer needs to actually raise/syndicate, and keep Massing out of the regulated path entirely.
+when a customer needs to actually raise/syndicate, and keep SadSha Build Pro out of the regulated path entirely.
 
 ---
 
@@ -2810,7 +2810,7 @@ bundling/auto-update policy these feed into.
   duplicate it. Coordination/review tools are not authoring apps and their IFC export is
   weak/third-party, so the correct workflow is **export IFC from each authoring source** (Revit native)
   and federate here. Our free pyRevit path (L3) already covers batch export. *Optional future nicety:*
-  a one-click pyRevit macro that exports IFC **and uploads to a Massing project** — convenience
+  a one-click pyRevit macro that exports IFC **and uploads to a SadSha Build Pro project** — convenience
   only, not a mission requirement.
 - **IFC5 / IFCX** — confirmed **alpha** (component-based + JSON serialization,
   [IFC5-development](https://github.com/buildingSMART/IFC5-development)); not production. L2 stays
@@ -3136,7 +3136,7 @@ The 2026-07 direction change: the Model workspace became a genuine authoring+coo
 - **L1** `@ifc-lite/geometry` server-side converter spike — **EVALUATED → DEFER**: the current Fragments path converts a 1.6 MB IFC → `.frag` in ~1.1 s, no bottleneck at our model scale. *Re-trigger: a customer with ≳50 MB IFC where conversion latency bites.*
 - **L4** FreeCAD headless engine — **EVALUATED → DEFER**: parametric families + 2D drawings are already covered by `ifcopenshell` recipes + `drawings.py` + `sheetgen.py`. *Re-trigger: a concrete parametric op `ifcopenshell` cannot express.*
 - **glTF import overlay** — already ships (`referenceLoader.ts` parses `.gltf`/`.glb` into a view-only reference overlay)
-- **pyRevit "Publish to Massing" macro** — already ships (`integrations/pyrevit/Massing.extension`: export IFC → upload → convert → open; no paid bridge)
+- **pyRevit "Publish to SadSha Build Pro" macro** — already ships (`integrations/pyrevit/SadSha Build Pro.extension`: export IFC → upload → convert → open; no paid bridge)
 - **RVT→IFC via the paid Autodesk bridge** — hardened (v0.3.243): a properly-gated Design-Automation stub + input validation + `test_aps.py` locking the gate order (501 → 400 → 402 → 400 → 502)
 
 ### Wave 10 — IFC authoring suite (shipped parts)
@@ -3352,7 +3352,7 @@ into micro-apps, but the **CAD authoring UX** and a few dev practices are worth 
    a reason otherwise), **collision refusal** (never overwrite). Idempotent reload; refusals are data +
    logs, never fatal. `plugin_registry.py` · `GET /plugins` + admin-gated `POST /plugins/reload` ·
    template + worked example at `plugins/`. *(Later: curated registry.json + process isolation.)*
-7. ✅ **MCP-PACK — SHIPPED v0.3.435 — Massing MCP server + skill/docs pack** *(★★)* — the MCP catalog grew
+7. ✅ **MCP-PACK — SHIPPED v0.3.435 — SadSha Build Pro MCP server + skill/docs pack** *(★★)* — the MCP catalog grew
    8→14: the authoring + analysis engines are now agent-drivable (`list_recipes`, `run_recipe`,
    `schedule_risk`, `carbon_report`, `permit_readiness`, `drawing_qa`), so an agent is a first-class
    *author*, not just a reader. The two write tools (`create_rfi`, `run_recipe`) carry the same editor-role
@@ -3893,11 +3893,11 @@ vehicle across almost every item. BUILD = deterministic/offline/we-own-it · INT
 feature-flagged connector (never a runtime dep) · SKIP = conflicts with a constraint/non-goal.
 
 **Tier 1 — flagship, high-value, reuse proven engines:**
-- ◧ **MASSING-OPT — layout optioneer** *(L; phase-1 v0.3.576).* The literal "Massing" play. ✅
+- ◧ **MASSING-OPT — layout optioneer** *(L; phase-1 v0.3.576).* The literal "SadSha Build Pro" play. ✅
   `layout_options.py` `optioneer()` deterministically sweeps envelope levers (floor-to-floor · core
   efficiency · coverage strategy · unit size) over `massing.compute_massing`, scores each by a transparent
   yield-on-cost proforma, and ranks by objective + a Pareto cost-vs-profit frontier → `POST
-  /massing/optioneer` (stateless) + client + ✅ the **🧮 Massing Optioneer portal panel** *(v0.3.582)*
+  /massing/optioneer` (stateless) + client + ✅ the **🧮 SadSha Build Pro Optioneer portal panel** *(v0.3.582)*
   (envelope form → ranked options + frontier). **Remaining:** emit each option as a **GUID-stable
   edit-recipe chain** (blank IFC → levels/grid → walls/slabs).
 - **MARGIN-CBS — per-cost-code live margin rollup** *(M).* One reconciliation view keyed on the
@@ -8038,7 +8038,7 @@ Header still read *"◧ … measured 2026-08-27, NOT yet read"*. The body's own 
     guard **and** `/auth/providers`, because gating only the routes leaves the sign-in page rendering
     a button that 402s on click — the symmetric-path defect, hit a fifth time.
     Found alongside: upgrade messaging was a **second, hand-kept copy of the tier matrix** naming only
-    the openBIM formats, so every Home-tier refusal read *"PNG export requires the Massing a higher
+    the openBIM formats, so every Home-tier refusal read *"PNG export requires the SadSha Build Pro a higher
     plan (or higher)"*. `min_tier_for` / `min_tier_for_export` derive it; `tier_at_least` is deleted
     because these are the derivations that needed to exist.
   * ✅ `cited_answer.cite_record` has no producer — but **"only `cite_ifc` is ever produced" was

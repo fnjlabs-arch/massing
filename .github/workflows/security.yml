@@ -216,7 +216,7 @@ jobs:
         with:
           path: .
           format: spdx-json
-          artifact-name: massing-sbom.spdx.json
+          artifact-name: sadsha-build-pro-sbom.spdx.json
           upload-artifact: true
 
   node:

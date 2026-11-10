@@ -1,7 +1,7 @@
 """Conceptual / parametric estimating — a $/SF cost off building parameters at the massing stage.
 
 Ediphi's wedge is estimating from geometry before there's a detailed takeoff; it's on-brand for a
-product called Massing (we generate the building from a zoning envelope). This turns building type +
+product called SadSha Build Pro (we generate the building from a zoning envelope). This turns building type +
 GFA + unit count into a conceptual cost with a low/base/high range, escalated for region and year, plus
 derived $/SF, $/unit and $/key metrics — the number a developer needs for the proforma before design.
 Deterministic; the $/SF table is a sane national-average default a deployment overrides. A directional

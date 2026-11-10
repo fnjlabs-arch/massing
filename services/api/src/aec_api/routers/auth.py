@@ -556,7 +556,7 @@ def put_integrations(values: dict = Body(..., embed=True), db: Session = Depends
     unknown = [k for k in values if k not in settings_store.ALL_KEYS]
     if unknown:
         raise HTTPException(400, f"unknown setting(s): {unknown}")
-    # validate the Massing licence key format (empty clears it; non-empty must be MASS-XXXX-XXXX-XXXX-XXXX)
+    # validate the SadSha Build Pro licence key format (empty clears it; non-empty must be MASS-XXXX-XXXX-XXXX-XXXX)
     from .. import licensing
     lk = values.get("MASSING_LICENSE_KEY")
     if lk and not licensing.valid_key_format(lk):

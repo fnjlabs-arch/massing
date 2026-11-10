@@ -320,7 +320,7 @@ describe("the docs describe the module engine that exists", () => {
 });
 
 /**
- * `docs/status.html` is titled "Massing — current status" and is linked from `index.html`,
+ * `docs/status.html` is titled "SadSha Build Pro — current status" and is linked from `index.html`,
  * `guide.html`, `capabilities.html` and the docs index. On 2026-08-13 its "Recently shipped" section
  * still showcased v0.3.573–581 as "the latest wave" against a live **v0.3.932** — 352 releases, six
  * weeks. Nothing was wrong with the page; it simply stopped being true, and no check reads prose.

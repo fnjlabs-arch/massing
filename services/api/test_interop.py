@@ -30,7 +30,7 @@ from aec_api import conntest  # noqa: E402
 assert conntest.test_group("Speckle (interoperability)")["ok"] is False
 assert conntest.test_group("SSO — Google")["ok"] is False
 assert conntest.test_group("Nope")["ok"] is False
-assert conntest.test_group("Massing licence")["ok"] is True    # open mode — licence optional
+assert conntest.test_group("SadSha Build Pro licence")["ok"] is True    # open mode — licence optional
 
 # off by default
 assert speckle_bridge.is_enabled() is False

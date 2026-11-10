@@ -226,7 +226,7 @@ def project_status_pdf(db: Session, pid: str, project_name: str) -> bytes:
         row(f"{a['ref']} — {(a.get('title') or '')[:48]}", a.get("state", ""), indent=8)
 
     c.setFont("Helvetica-Oblique", 8)
-    c.drawString(margin, 30, "Massing — generated from live project data")
+    c.drawString(margin, 30, "SadSha Build Pro — generated from live project data")
     c.showPage()
     c.save()
     return buf.getvalue()
@@ -559,7 +559,7 @@ class _Deck:
         c.drawString(m, ry, "Key risks:"); ry -= 20
         for r in self.risk.get("risks", [])[:4]:
             c.drawString(m + 12, ry, f"• [{r['level'].upper()}] {r['text']}"[:110]); ry -= 18
-        c.setFont("Helvetica-Oblique", 8); c.drawString(m, 30, "Massing — generated from live project data · Confidential")
+        c.setFont("Helvetica-Oblique", 8); c.drawString(m, 30, "SadSha Build Pro — generated from live project data · Confidential")
 
     def render(self) -> bytes:
         """Draw every slide in deck order (each ends its page), then close the canvas."""
@@ -746,7 +746,7 @@ def investment_memo_pdf(db: Session, pid: str, project_name: str) -> bytes:
         row(f"[{r['level'].upper()}] {r['text']}"[:78], "", indent=8)
 
     c.setFont("Helvetica-Oblique", 8)
-    c.drawString(margin, 30, "Massing — generated from live project data · Confidential")
+    c.drawString(margin, 30, "SadSha Build Pro — generated from live project data · Confidential")
     c.showPage(); c.save()
     return buf.getvalue()
 
@@ -793,6 +793,6 @@ def module_log_pdf(db: Session, pid: str, key: str, project_name: str) -> bytes:
         c.drawString(cols[3][0], y, str(r.get("assignee") or "")[:14])
         y -= 14
     c.setFont("Helvetica-Oblique", 8)
-    c.drawString(margin, 30, "Massing — generated from live project data")
+    c.drawString(margin, 30, "SadSha Build Pro — generated from live project data")
     c.showPage(); c.save()
     return buf.getvalue()

@@ -1,6 +1,6 @@
 # Authoring the model
 
-Massing is a modeling program, not a viewer with an edit button. You can start from a blank IFC and
+SadSha Build Pro is a modeling program, not a viewer with an edit button. You can start from a blank IFC and
 draw a building; you can also open somebody else's IFC and edit it without breaking their GUIDs.
 
 ## The one rule that explains the design
@@ -57,7 +57,7 @@ build in plain English and it produces a *validated plan* you approve before any
 
 ## Families and types
 
-Massing places **types** (`IfcTypeProduct`), not meshes. A family is an IFC type carrying a mapped
+SadSha Build Pro places **types** (`IfcTypeProduct`), not meshes. A family is an IFC type carrying a mapped
 representation; placing it instances an occurrence that shares that representation.
 
 This is why a family swap updates every instance, and why the file does not grow linearly with
@@ -95,7 +95,7 @@ and the Draft tools take it from there.
 Reference overlays are exactly that — context, not model elements.
 
 ### Georeferencing
-Massing keeps **real coordinates for export** while rendering near the scene origin. Set-origin and CRS
+SadSha Build Pro keeps **real coordinates for export** while rendering near the scene origin. Set-origin and CRS
 handling exist because a model rendered at its true survey coordinates has floating-point precision
 problems, and a model that loses them cannot be exported for survey or GIS use. Both requirements are
 real, so they are handled separately rather than compromised.
@@ -122,7 +122,7 @@ unchanged.
 
 ## Where authoring runs, and why
 
-The browser renders, selects, snaps and drafts. Python (ifcopenshell) writes IFC. Massing is a thin
+The browser renders, selects, snaps and drafts. Python (ifcopenshell) writes IFC. SadSha Build Pro is a thin
 offline-capable client over a Python authoring service, deliberately — not a fat in-browser CAD kernel.
 The reasoning is in [client-vs-server.md](../client-vs-server.md).
 

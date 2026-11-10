@@ -1,6 +1,6 @@
 # User guide
 
-How to use Massing. If you have not installed it yet, start with
+How to use SadSha Build Pro. If you have not installed it yet, start with
 [getting started](../getting-started.md).
 
 Read in this order the first time — each page assumes the one before it.

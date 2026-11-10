@@ -15,7 +15,7 @@ from typing import Any
 
 # admin-configurable integration settings (drives the Settings UI + validation)
 CATALOG: list[dict[str, Any]] = [
-    {"group": "Massing licence", "keys": [
+    {"group": "SadSha Build Pro licence", "keys": [
         {"key": "MASSING_LICENSE_KEY", "label": "Licence key", "secret": True},
         {"key": "MASSING_LICENSE_TIER", "label": "Plan (free/home/commercial/enterprise)",
          "secret": False, "default": "free"},

@@ -19,7 +19,7 @@ Doing the exchange **server-side rather than in the browser** keeps the cloud re
 `localStorage` and avoids needing massing.cloud to CORS-allow this origin; PKCE means no secret is
 required to do so, so nothing about the public-client model is bent.
 
-**Roles.** `userinfo` on Massing SSO v1.1.0 returns `{sub, name, email, avatar_url, tier, providers}`
+**Roles.** `userinfo` on SadSha Build Pro SSO v1.1.0 returns `{sub, name, email, avatar_url, tier, providers}`
 and **no role** — verified against the plugin source, not the docs. `roles_from_userinfo` therefore
 reads several plausible spellings and returns `[]` when none are present, and `[]` never grants
 anything (fail closed). The site can add roles in a few lines through its own `massing_sso_userinfo`
@@ -207,7 +207,7 @@ revoke_token = _revoke_token
 def roles_from_userinfo(info: dict[str, Any]) -> list[str]:
     """Best-effort role extraction, lower-cased.
 
-    Massing SSO v1.1.0 sends none of these keys, so this returns `[]` today and callers must treat
+    SadSha Build Pro SSO v1.1.0 sends none of these keys, so this returns `[]` today and callers must treat
     `[]` as "no elevation" rather than "not an admin, probably". Several spellings are accepted so
     that whichever shape the site's `massing_sso_userinfo` filter adopts, this keeps working:
     `roles: [...]`, `role: "editor"`, or the OIDC-ish `wp_roles`."""

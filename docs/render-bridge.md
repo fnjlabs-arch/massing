@@ -2,7 +2,7 @@
 
 Turning a concept — the space **program** + **massing** + a text prompt — into **AI concept renders /
 variations** needs an external image-generation model, with its own GPUs, cost and data governance.
-Massing does **not** ship or run that model. Instead the platform exposes a **feature-flagged bridge**:
+SadSha Build Pro does **not** ship or run that model. Instead the platform exposes a **feature-flagged bridge**:
 it builds a **grounded prompt** from the project's program/massing, hands it to any image service you
 connect, and ingests the returned image references as reviewable `concept_render` records. When the flag
 is off — the default — the endpoints report the bridge as unavailable and **nothing is fabricated**: no

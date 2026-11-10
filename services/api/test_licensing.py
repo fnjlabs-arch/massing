@@ -1,4 +1,4 @@
-"""Massing licensing — key-format validation, per-tier feature entitlements, the /license + /capabilities
+"""SadSha Build Pro licensing — key-format validation, per-tier feature entitlements, the /license + /capabilities
 endpoints, and the Settings activation flow (record key + plan, reject malformed keys).
 Run: PYTHONPATH=src ./.venv/Scripts/python.exe test_licensing.py"""
 import os
@@ -34,7 +34,7 @@ assert licensing.allows("api_access", "commercial") and not licensing.allows("ap
 assert licensing.allows("navisworks", "enterprise") and not licensing.allows("navisworks", "commercial")
 assert licensing.allows("sso", "enterprise") and not licensing.allows("sso", "commercial")
 # R37-CONTRACT: upgrade messaging is DERIVED from TIER_FEATURES, not a second hand-kept dict. The dict
-# it replaced listed only the openBIM formats, so every Home-tier export said "requires the Massing
+# it replaced listed only the openBIM formats, so every Home-tier export said "requires the SadSha Build Pro
 # a higher plan (or higher)" — the most common refusal a Free workspace would ever see.
 assert licensing.min_tier_for_export("png") == "Home", licensing.min_tier_for_export("png")
 assert licensing.min_tier_for_export("ifc") == "Commercial"

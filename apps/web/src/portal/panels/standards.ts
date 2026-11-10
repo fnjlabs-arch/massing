@@ -70,7 +70,7 @@ export async function renderProgram(ctx: PanelContext) {
     body.append(ac);
     // massing hand-off
     const mh = el("div", "meta"); mh.style.marginTop = "8px";
-    mh.textContent = `Massing hand-off: ${s.massing_hints.gross_area_sf.toLocaleString()} sf gross, `
+    mh.textContent = `SadSha Build Pro hand-off: ${s.massing_hints.gross_area_sf.toLocaleString()} sf gross, `
       + Object.entries(s.massing_hints.mix_pct).map(([k, v]) => `${k} ${v}%`).join(" · ");
     body.append(mh);
   }

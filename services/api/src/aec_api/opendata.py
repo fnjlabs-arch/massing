@@ -184,7 +184,7 @@ def _fetch(domain: str, dataset: str, where: str | None, q: str | None, order: s
     hit = _CACHE.get(ck)
     if hit and time.time() - hit[0] < _TTL:
         return hit[1]
-    headers = {"Accept": "application/json", "User-Agent": "Massing/opendata"}
+    headers = {"Accept": "application/json", "User-Agent": "SadSha Build Pro/opendata"}
     token = settings_store.get("SOCRATA_APP_TOKEN")
     if token:
         headers["X-App-Token"] = token

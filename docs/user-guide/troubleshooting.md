@@ -139,5 +139,5 @@ performed.
 - `/docs` on any running API is the live, authoritative endpoint reference.
 - [operations.md](../operations.md) — day-2 runbook, health probes, common incidents.
 - [ops/runbooks.md](../ops/runbooks.md) — incident runbooks.
-- [Open an issue](https://github.com/ibuilder/massing/issues) with what you ran, what you expected, and
+- [Open an issue](https://github.com/fnjlabs-arch/massing/issues) with what you ran, what you expected, and
   what the health check returned.

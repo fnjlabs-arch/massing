@@ -267,7 +267,7 @@ def to_idf(model_or_built, version: str = "23.2") -> str:
     """EnergyPlus IDF — Building / Zone / Material / Construction / BuildingSurface:Detailed."""
     b = model_or_built if isinstance(model_or_built, dict) else build(model_or_built)
     out: list[str] = [
-        "!- EnergyPlus envelope export (Massing ENERGY phase 1) — geometry + constructions only.",
+        "!- EnergyPlus envelope export (SadSha Build Pro ENERGY phase 1) — geometry + constructions only.",
         "!- No HVAC, schedules or loads: add them in the simulation setup.",
         f"Version,{version};",
         "",

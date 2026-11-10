@@ -1,6 +1,6 @@
-# Massing documentation
+# SadSha Build Pro documentation
 
-Everything written down about Massing, and which of it to read. Start here rather than in the file
+Everything written down about SadSha Build Pro, and which of it to read. Start here rather than in the file
 list — the useful path through these documents is not alphabetical.
 
 | I want to… | Read |
@@ -22,7 +22,7 @@ list — the useful path through these documents is not alphabetical.
 > disk and fail CI when they disagree with the code. Where you see a claim about the product below, a
 > test is usually holding it in place. Where a document is a plan or a snapshot, it says so at the top.
 
-## Using Massing
+## Using SadSha Build Pro
 
 | Document | What it covers |
 | --- | --- |
@@ -30,7 +30,7 @@ list — the useful path through these documents is not alphabetical.
 | [user-guide/](user-guide/) | The detailed guide — rooms, authoring, drawings, records, files, troubleshooting. |
 | [walkthrough.md](walkthrough.md) | The demo script, scene by scene, with timings. Also a written tour. |
 | [authoring-modules.md](authoring-modules.md) | Define a new record type as JSON — form, list, workflow. No code. |
-| [families.md](families.md) | The type library: how Massing places IFC **types**, not meshes, and how to add content. |
+| [families.md](families.md) | The type library: how SadSha Build Pro places IFC **types**, not meshes, and how to add content. |
 | [mobile.md](mobile.md) | The separate mobile app. **Plan** — no native build in CI yet. |
 
 ## Reference
@@ -63,12 +63,12 @@ list — the useful path through these documents is not alphabetical.
 
 ## Integrations and bridges
 
-Each of these documents an **optional** seam. All are off by default; none is required to run Massing.
+Each of these documents an **optional** seam. All are off by default; none is required to run SadSha Build Pro.
 
 | Document | Status |
 | --- | --- |
 | [massing-cloud-bridge.md](massing-cloud-bridge.md) | Optional online licence validation. Off by default; offline-first. |
-| [cv-bridge.md](cv-bridge.md) | Site-progress % from photos. Massing does **not** ship the vision model. |
+| [cv-bridge.md](cv-bridge.md) | Site-progress % from photos. SadSha Build Pro does **not** ship the vision model. |
 | [render-bridge.md](render-bridge.md) | AI concept renders. External image model; not bundled. |
 | [esign-options.md](esign-options.md) | E-signature approach for contracts and change orders. |
 | [realestate-marketing.md](realestate-marketing.md) | Disposition and appraisal — plan + decisions. |

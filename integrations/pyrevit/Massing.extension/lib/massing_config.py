@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Shared config + client factory for the Massing pyRevit buttons. Stores the API URL, web (app)
-URL and API key in pyRevit's per-user config (Massing > Settings writes it). Revit-side only."""
+"""Shared config + client factory for the SadSha Build Pro pyRevit buttons. Stores the API URL, web (app)
+URL and API key in pyRevit's per-user config (SadSha Build Pro > Settings writes it). Revit-side only."""
 from massing_api import MassingClient, MassingError  # noqa: F401 (re-exported)
 from pyrevit import forms, script
 
@@ -39,7 +39,7 @@ def get_client(require=True):
     user to open Settings and returns None."""
     cfg = read()
     if require and not cfg["api_url"]:
-        forms.alert("Massing isn't configured yet.\nClick Massing > Settings to set your API URL + key.",
-                    title="Massing", warn_icon=True)
+        forms.alert("SadSha Build Pro isn't configured yet.\nClick SadSha Build Pro > Settings to set your API URL + key.",
+                    title="SadSha Build Pro", warn_icon=True)
         return None
     return MassingClient(cfg["api_url"], cfg["api_key"], app_url=cfg["app_url"] or None)

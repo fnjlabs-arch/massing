@@ -43,7 +43,7 @@ function empty(msg: string, actionLabel?: string, onClick?: () => void): HTMLEle
 function refusalView(e: unknown, deps: LibraryDeps): HTMLElement | null {
   if (!(e instanceof CloudError)) return null;
   if (e.needsUpgrade) {
-    return empty("The cloud project library is included with any paid Massing plan. "
+    return empty("The cloud project library is included with any paid SadSha Build Pro plan. "
       + "Your massing.cloud account is on the Free plan.",
       "See plans", () => window.open(`${deps.siteUrl}/pricing/`, "_blank", "noopener"));
   }

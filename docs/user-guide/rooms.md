@@ -1,6 +1,6 @@
 # The seven rooms
 
-Massing's primary navigation is seven rooms, and they are **the same seven for everyone**. A quantity
+SadSha Build Pro's primary navigation is seven rooms, and they are **the same seven for everyone**. A quantity
 surveyor, a superintendent and a developer see the same structure in the same order; what changes is
 which room opens first.
 

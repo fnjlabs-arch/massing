@@ -1,6 +1,6 @@
 # Files: what goes in, what comes out
 
-Massing's position is that your data should leave as easily as it arrived. IFC is the source of truth,
+SadSha Build Pro's position is that your data should leave as easily as it arrived. IFC is the source of truth,
 and every derived artifact is regenerable.
 
 ## `.mass` — a project in one file

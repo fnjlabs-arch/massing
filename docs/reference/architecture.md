@@ -44,7 +44,7 @@ Two more that shape the data model:
 | Analysis (clash, IDS, QTO, drawings) | Python (`services/data`) | Needs the full model and real geometry kernels. |
 | Persistence, auth, records | FastAPI (`services/api`) | One gate in front of everything. |
 
-Massing is a **thin, offline-capable client over a Python authoring/analysis service** — not a fat
+SadSha Build Pro is a **thin, offline-capable client over a Python authoring/analysis service** — not a fat
 in-browser CAD kernel. That is the single most consequential decision in the codebase.
 
 ## Stack

@@ -1,8 +1,8 @@
 # massing.cloud licence bridge — integration contract
 
-The self-hosted Massing app can validate a licence key online against **massing.cloud** and read the
+The self-hosted SadSha Build Pro app can validate a licence key online against **massing.cloud** and read the
 authoritative plan. This is **optional and off by default** (offline-first): the tier recorded in
-*Settings ▸ Massing licence* is authoritative on its own, so a massing.cloud outage can never lock a
+*Settings ▸ SadSha Build Pro licence* is authoritative on its own, so a massing.cloud outage can never lock a
 paying operator out of their own app.
 
 App side: [`services/api/src/aec_api/license_cloud.py`](../services/api/src/aec_api/license_cloud.py).

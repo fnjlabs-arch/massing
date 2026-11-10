@@ -42,7 +42,7 @@ class OptionError(ValueError):
         self.code = code
 
 
-# Structural system → m³ of concrete and kg of steel per m² of GFA. Massing-stage assemblies from
+# Structural system → m³ of concrete and kg of steel per m² of GFA. SadSha Build Pro-stage assemblies from
 # published concept-estimating ranges; overridable per call.
 STRUCTURE: dict[str, dict[str, float]] = {
     "concrete_flat_plate": {"concrete_m3_per_m2": 0.26, "rebar_kg_per_m2": 22.0, "steel_kg_per_m2": 0.0},

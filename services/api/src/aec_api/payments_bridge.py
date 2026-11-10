@@ -1,6 +1,6 @@
 """Payment execution bridge — OPTIONAL, and deliberately a stub until a licensed processor is wired.
 
-Massing tracks the pay-app ↔ lien-waiver workflow (payapp.py) but does NOT move money itself. Actual
+SadSha Build Pro tracks the pay-app ↔ lien-waiver workflow (payapp.py) but does NOT move money itself. Actual
 disbursement (ACH to a sub, owner-billing collection) must go through a licensed payment processor
 (Stripe Connect, Dwolla, a bank rail) provisioned in your deployment — with its own KYC, ledgering,
 and compliance. This mirrors the speckle/aps bridges: OFF unless configured, and `send_payment` raises
@@ -22,10 +22,10 @@ def is_enabled() -> bool:
 def status() -> dict:
     if not is_enabled():
         return {"enabled": False, "provider": None,
-                "message": "Payment execution is not configured. Massing tracks pay-apps and lien-waiver "
+                "message": "Payment execution is not configured. SadSha Build Pro tracks pay-apps and lien-waiver "
                            "exposure; to disburse funds, provision a licensed processor (e.g. Stripe "
                            "Connect / Dwolla) and set PAYMENTS_PROVIDER. Money movement always runs "
-                           "through the processor, never through Massing."}
+                           "through the processor, never through SadSha Build Pro."}
     return {"enabled": True, "provider": provider(),
             "message": f"Payments provider '{provider()}' configured — disbursement runs through the "
                        "processor's API in your deployment."}
@@ -41,7 +41,7 @@ def send_payment(vendor: str, amount: float, *, lien_exposure: float = 0.0) -> d
                          "collect an unconditional waiver before disbursing.")
     if not is_enabled():
         raise RuntimeError("Payment execution is not configured (set PAYMENTS_PROVIDER and provision a "
-                           "licensed processor). Massing does not move money itself.")
+                           "licensed processor). SadSha Build Pro does not move money itself.")
     raise NotImplementedError(
         f"Disbursement of ${amount:,.2f} to {vendor} runs through the configured processor "
         f"'{provider()}'. Wire the processor's transfer API in your deployment to enable it; the "

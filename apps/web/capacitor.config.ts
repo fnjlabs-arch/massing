@@ -10,8 +10,8 @@ import type { CapacitorConfig } from "@capacitor/cli";
  * viewer must be validated on each device's WebView (see docs/deploy.md → Mobile).
  */
 const config: CapacitorConfig = {
-  appId: "com.ibuilder.aecbim",
-  appName: "Massing",
+  appId: "com.sadsha.buildpro",
+  appName: "SadSha Build Pro",
   webDir: "dist",
   // For live-reload during dev, uncomment and point at your machine:
   // server: { url: "http://192.168.1.x:5173", cleartext: true },

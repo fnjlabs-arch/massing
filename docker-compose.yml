@@ -47,7 +47,7 @@ services:
     #       memory: "${AEC_MINIO_MEM_LIMIT:-1g}"
 
   api:
-    image: massing-api
+    image: sadsha-build-pro-api
     build:
       context: .
       dockerfile: services/api/Dockerfile
@@ -100,7 +100,7 @@ services:
   # moving?" is a question about the oldest `queued` row, not about this container being up — a
   # wedged worker and an idle one look identical from outside.
   worker:
-    image: massing-api
+    image: sadsha-build-pro-api
     build:
       context: .
       dockerfile: services/api/Dockerfile
@@ -129,7 +129,7 @@ services:
   # DEV/TEST ONLY — never run against production. The script refuses if projects already exist
   # (see docs/PRODUCTION_CHECKLIST.md); --force overrides only for labs.
   seed:
-    image: massing-api
+    image: sadsha-build-pro-api
     depends_on:
       api: { condition: service_healthy }
     command: ["python", "/app/services/api/seed_demo.py", "--url", "http://api:8000", "--user", "gc"]

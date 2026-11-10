@@ -3,7 +3,7 @@
 ## Cursor Cloud specific instructions
 
 This section is for Cloud Agents running in an environment where the startup **update script** has
-already installed dependencies. It captures the non-obvious bits of running Massing here; standard
+already installed dependencies. It captures the non-obvious bits of running SadSha Build Pro here; standard
 commands and product detail live in the README, `docs/getting-started.md`, and the `.claude/skills/`.
 
 ### What the update script already did

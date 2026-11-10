@@ -1,6 +1,6 @@
 # Drawings, schedules and the specification manual
 
-Massing generates a permit-ready construction-document set **from the model**. Drawings are not drawn;
+SadSha Build Pro generates a permit-ready construction-document set **from the model**. Drawings are not drawn;
 they are derived, which is why they cannot disagree with the building.
 
 ## What gets generated

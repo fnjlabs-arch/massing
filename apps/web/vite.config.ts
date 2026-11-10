@@ -83,8 +83,8 @@ return {
       registerType: "autoUpdate",
       includeAssets: ["icon.svg"],
       manifest: {
-        name: "Massing + GC Portal",
-        short_name: "Massing",
+        name: "SadSha Build Pro + GC Portal",
+        short_name: "SadSha Build Pro",
         description: "Web BIM viewer + general-contracting portal + development proforma.",
         theme_color: "#1e1f22",
         background_color: "#16171a",

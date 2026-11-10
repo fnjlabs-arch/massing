@@ -79,7 +79,7 @@ def _safe_name(name: str) -> str:
     return base
 
 
-def build_index(documents: list[dict], linksets: list[str], *, creator: str = "Massing",
+def build_index(documents: list[dict], linksets: list[str], *, creator: str = "SadSha Build Pro",
                 description: str = "", version: str = "1.0") -> str:
     """The container description — Index.rdf as Turtle-in-RDF/XML."""
     from rdflib import RDF, Literal, Namespace, URIRef
@@ -154,7 +154,7 @@ def build_linkset(links: list[dict]) -> str:
 
 
 def write_container(path: str, documents: list[dict], links: list[dict] | None = None, *,
-                    creator: str = "Massing", description: str = "",
+                    creator: str = "SadSha Build Pro", description: str = "",
                     linkset_name: str = "links.rdf") -> dict[str, Any]:
     """Write an ISO 21597-1 container.
 

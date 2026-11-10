@@ -1,5 +1,5 @@
 """SAML 2.0 SSO endpoints — SP metadata, login initiation (redirect to the IdP), and the Assertion
-Consumer Service (ACS) that verifies the signed response and mints a Massing session. Mirrors the
+Consumer Service (ACS) that verifies the signed response and mints a SadSha Build Pro session. Mirrors the
 OAuth flow in routers/auth.py: a verified email maps to a plain free-tier user (auto-provisioned
 unless AEC_OAUTH_NO_AUTOPROVISION=1), honoring the same AEC_OAUTH_ALLOWED_DOMAINS gate. All the
 cryptographic verification lives in saml.py.

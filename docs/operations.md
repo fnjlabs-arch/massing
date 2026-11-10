@@ -1,6 +1,6 @@
 # Operator runbook (day-2)
 
-The one-page "start here" for running Massing in production. For the full stack layout, storage, and
+The one-page "start here" for running SadSha Build Pro in production. For the full stack layout, storage, and
 auth model, see **[deploy.md](deploy.md)**; this page is the operational quick-reference.
 
 ## Is it healthy?

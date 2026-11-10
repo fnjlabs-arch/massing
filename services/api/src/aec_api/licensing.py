@@ -1,4 +1,4 @@
-"""Massing licensing — records the workspace's Massing licence key + plan tier and exposes the
+"""SadSha Build Pro licensing — records the workspace's SadSha Build Pro licence key + plan tier and exposes the
 per-tier feature entitlements the rest of the app gates on. Pure/std-lib.
 
 Plans (see https://www.massing.cloud/docs/): Free · Home · Commercial · Enterprise. A key looks like
@@ -133,7 +133,7 @@ def min_tier_for(feature: str) -> str | None:
     Derived from TIER_FEATURES rather than hand-listed. The two dicts this replaces were a second copy
     of the matrix and were INCOMPLETE, which reached users: `_EXPORT_MIN_TIER` named only the openBIM
     formats, so every Home-tier export fell through to a `"a higher"` default and the 402 read
-    *"PNG export requires the Massing a higher plan (or higher)"* — for png/pdf/dxf/obj/gltf/glb, the
+    *"PNG export requires the SadSha Build Pro a higher plan (or higher)"* — for png/pdf/dxf/obj/gltf/glb, the
     most common refusal a Free-tier workspace would ever see. A duplicated derivation is where the
     unmaintained half hides; there is now one source for what a tier unlocks."""
     for t in TIER_ORDER:
@@ -160,8 +160,8 @@ def require(feature, label=None):
     what = label or feature
     need = min_tier_for(feature)
     if need is None:                 # no tier grants it — say that, rather than implying an upgrade helps
-        raise HTTPException(402, f"{what} is not included on any Massing plan.")
-    raise HTTPException(402, f"{what} requires the Massing {need} plan (or higher). Add a licence "
+        raise HTTPException(402, f"{what} is not included on any SadSha Build Pro plan.")
+    raise HTTPException(402, f"{what} requires the SadSha Build Pro {need} plan (or higher). Add a licence "
                              "in Settings, or see massing.cloud.")
 
 
@@ -173,8 +173,8 @@ def require_export(fmt, label=None):
     what = label or fmt.upper()
     need = min_tier_for_export(fmt)
     if need is None:
-        raise HTTPException(402, f"{what} export is not included on any Massing plan.")
-    raise HTTPException(402, f"{what} export requires the Massing {need} plan (or higher). Add a "
+        raise HTTPException(402, f"{what} export is not included on any SadSha Build Pro plan.")
+    raise HTTPException(402, f"{what} export requires the SadSha Build Pro {need} plan (or higher). Add a "
                             "licence in Settings, or see massing.cloud.")
 
 
@@ -189,7 +189,7 @@ def state() -> dict[str, Any]:
         msg = ("Open mode — all features are available and a licence is optional. (Adding a key now is "
                "fine; entitlement enforcement is off until the operator enables it.)")
     elif configured and fmt_ok:
-        msg = f"Massing {TIER_LABEL.get(tier, tier)} plan active."
+        msg = f"SadSha Build Pro {TIER_LABEL.get(tier, tier)} plan active."
     elif not configured:
         msg = ("Enforcement is on but no licence key is recorded — running on the Free tier. Paste your "
                "key (MASS-XXXX-XXXX-XXXX-XXXX) under Settings; get one at massing.cloud.")

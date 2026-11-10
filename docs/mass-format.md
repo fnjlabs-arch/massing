@@ -5,7 +5,7 @@
 A `.mass` file is one project: its model, all of its data, and its attachments, in a single file you
 can copy, email, archive or check into version control. It is a **plain ZIP archive**. Everything
 inside is either UTF-8 JSON or a standard AEC file format. There is no proprietary encoding anywhere,
-and you do not need Massing to read it.
+and you do not need SadSha Build Pro to read it.
 
 ## Why it is called that
 
@@ -14,7 +14,7 @@ seen it, which is the opposite of what it is — this container has never held a
 vendor format. An extension that misleads about its own contents is a defect, so it became `.mass`.
 
 **Version 1 `.mmproj` files still open.** A rename that orphans everything anyone already saved is
-not a rename; it is data loss. Massing reads v1 forever and writes v2 only.
+not a rename; it is data loss. SadSha Build Pro reads v1 forever and writes v2 only.
 
 ## Layout
 

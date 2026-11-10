@@ -239,7 +239,7 @@ export function withAuth<TBase extends Ctor<HttpCore>>(Base: TBase) {
     return this.json<{ ai: boolean; email: boolean; sso: string[]; local_mode?: boolean;
       license_tier?: string }>("/capabilities");
   }
-  /** Massing licence state — plan tier, per-tier features, masked key. Drives the Settings licence panel. */
+  /** SadSha Build Pro licence state — plan tier, per-tier features, masked key. Drives the Settings licence panel. */
   license() {
     return this.json<{ tier: string; tier_label: string; enforced: boolean;
       features: { exports: string[]; api_access: boolean; sso: boolean; navisworks: boolean };

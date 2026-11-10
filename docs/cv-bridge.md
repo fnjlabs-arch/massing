@@ -1,6 +1,6 @@
 # Computer-vision site-progress bridge
 
-Estimating **% complete** from site photos needs a computer-vision model. Massing does **not** ship or
+Estimating **% complete** from site photos needs a computer-vision model. SadSha Build Pro does **not** ship or
 run that model — training/serving a construction-progress vision model is an external concern with its
 own data, GPUs and cost. Instead the platform exposes a **feature-flagged bridge**: you connect any
 vision service (an in-house model, a vendor API, a hand-labelling tool) and it POSTs progress estimates

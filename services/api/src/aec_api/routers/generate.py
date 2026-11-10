@@ -34,7 +34,7 @@ _ENVELOPE_422 = ("invalid or incomplete zoning envelope — provide lot_area, lo
 
 class MassingIn(BaseModel):
     """Zoning envelope (metres) + acquisition assumptions for the starter proforma."""
-    name: str = "Massing Study"
+    name: str = "SadSha Build Pro Study"
     use_type: str = "residential"          # residential | commercial
     shape: str = "box"                     # box | dome (monolithic / earth dome house)
     dome_radius: float = Field(default=8.0, gt=0)   # hemisphere radius (m), for shape="dome"

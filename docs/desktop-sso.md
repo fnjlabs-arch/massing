@@ -1,6 +1,6 @@
-# Massing Desktop App — Sign in through massing.cloud (implementation guide)
+# SadSha Build Pro Desktop App — Sign in through massing.cloud (implementation guide)
 
-**Audience:** the agent/developer working in the **Massing desktop app** repo.
+**Audience:** the agent/developer working in the **SadSha Build Pro desktop app** repo.
 **Goal:** add "Sign in with massing.cloud" to the desktop app. After sign-in, the app shows the user's
 **name and avatar** and holds a token it can use for authenticated calls.
 
@@ -173,7 +173,7 @@ export async function signIn(): Promise<MassingSession> {
         }
         const code = url.searchParams.get('code')!;
         res.writeHead(200, { 'Content-Type': 'text/html' })
-           .end('<h2>Signed in to Massing</h2><p>You can close this window.</p>');
+           .end('<h2>Signed in to SadSha Build Pro</h2><p>You can close this window.</p>');
         server.close();
         resolve({ code, redirectUri: `http://127.0.0.1:${(server.address() as AddressInfo).port}/callback` });
       });
@@ -329,7 +329,7 @@ render it.
 
 The app has its own auth in [`services/api/src/aec_api/rbac.py`](../services/api/src/aec_api/rbac.py)
 with its own bearer tokens, project roles and step-up assertions. A massing.cloud `access_token`
-identifies a **massing.cloud account**, not a Massing project role.
+identifies a **massing.cloud account**, not a SadSha Build Pro project role.
 
 - Do not feed it to `current_user`, and do not let it satisfy `require_role`.
 - `tier` may gate a Pro **feature**; it must not gate **data**. Project-scoped access stays with

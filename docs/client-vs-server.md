@@ -1,6 +1,6 @@
 # Client vs server — where work runs, and why
 
-Massing is a **thin, offline-capable client over a Python authoring/analysis service**, not a fat
+SadSha Build Pro is a **thin, offline-capable client over a Python authoring/analysis service**, not a fat
 in-browser CAD kernel. This is a deliberate boundary: the browser renders, selects, snaps, and drafts;
 the server holds the IFC source of truth and does every geometry-mutating and analysis operation. This
 doc records the split and the two hard platform limits that shape it — so a contributor doesn't try to

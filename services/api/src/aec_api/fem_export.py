@@ -70,7 +70,7 @@ def to_opensees(model: ifcopenshell.file) -> dict[str, Any]:
     base = [i + 1 for i, k in enumerate(order) if k[2] - min_z <= _Z_TOL_IN]
 
     lines = [
-        "# OpenSees model exported by Massing — analytical frame for third-party verification.",
+        "# OpenSees model exported by SadSha Build Pro — analytical frame for third-party verification.",
         "# Units: kip, inch, ksi. Sections are NOMINAL defaults — re-section + apply your load case.",
         "wipe", "model BasicBuilder -ndm 3 -ndf 6", "", "# --- nodes (id x y z) ---"]
     for i, (x, y, z) in enumerate(order, 1):
@@ -137,7 +137,7 @@ def to_code_aster(model: ifcopenshell.file) -> dict[str, Any]:
     base = [i + 1 for i, k in enumerate(order) if k[2] - min_z <= _Z_TOL_M]
 
     out = ["TITRE",
-           "Massing analytical frame — geometry/supports skeleton for third-party verification (Code_Aster).",
+           "SadSha Build Pro analytical frame — geometry/supports skeleton for third-party verification (Code_Aster).",
            "FINSF", "%", "COOR_3D"]
     out += [f"N{i:<8d} {x} {y} {z}" for i, (x, y, z) in enumerate(order, 1)]
     out += ["FINSF", "%", "SEG2"]

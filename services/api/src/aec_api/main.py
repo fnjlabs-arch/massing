@@ -404,7 +404,7 @@ try:
 except ImportError:                                                    # pragma: no cover
     _DefaultResponse = JSONResponse
 
-app = FastAPI(title="Massing API", version="0.1.0", lifespan=lifespan,
+app = FastAPI(title="SadSha Build Pro API", version="0.1.0", lifespan=lifespan,
               default_response_class=_DefaultResponse)
 
 # OTel FastAPI request-span instrumentation must be attached here, at construction, because Starlette

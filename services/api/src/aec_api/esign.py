@@ -35,8 +35,8 @@ def _generate_self_signed_p12() -> bytes:
     from cryptography.x509.oid import NameOID
 
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Massing Signer"),
-                      x509.NameAttribute(NameOID.ORGANIZATION_NAME, "Massing")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "SadSha Build Pro Signer"),
+                      x509.NameAttribute(NameOID.ORGANIZATION_NAME, "SadSha Build Pro")])
     now = datetime.datetime.now(datetime.timezone.utc)
     cert = (x509.CertificateBuilder().subject_name(name).issuer_name(name)
             .public_key(key.public_key()).serial_number(x509.random_serial_number())
@@ -95,7 +95,7 @@ def digitally_sign(pdf_bytes: bytes, reason: str = "Approved", name: str = "") -
     meta = signers.PdfSignatureMetadata(
         field_name="AECSignature",
         reason=reason,
-        location="Massing",
+        location="SadSha Build Pro",
         name=name or None,
         subfilter=fields.SigSeedSubFilter.PADES,
     )

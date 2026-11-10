@@ -5,7 +5,7 @@ Please report security issues **privately** — do not open a public issue for a
 vulnerability. Use either private channel:
 
 - **Email (preferred):** [builder@massing.cloud](mailto:builder@massing.cloud). PGP available on request.
-- **GitHub:** a [private security advisory](https://github.com/ibuilder/massing/security/advisories/new)
+- **GitHub:** a [private security advisory](https://github.com/fnjlabs-arch/massing/security/advisories/new)
   (via the repository's **Security → Advisories → Report a vulnerability** button).
 
 We aim to acknowledge within a few days and to ship a fix or mitigation promptly. Please include steps

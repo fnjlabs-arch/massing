@@ -369,14 +369,14 @@ jobs:
           file: ${{ matrix.dockerfile }}
           push: false
           load: true
-          tags: massing-${{ matrix.name }}:pr
+          tags: sadsha-build-pro-${{ matrix.name }}:pr
           cache-from: type=gha
           no-cache-filters: ${{ matrix.nocache }}
 
       - name: Scan — gate (Trivy, CRITICAL)
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25  # v0.36.0
         with:
-          image-ref: massing-${{ matrix.name }}:pr
+          image-ref: sadsha-build-pro-${{ matrix.name }}:pr
           severity: CRITICAL
           ignore-unfixed: true
           exit-code: "1"

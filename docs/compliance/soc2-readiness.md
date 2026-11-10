@@ -8,7 +8,7 @@ roadmap-gated (P3).*
 
 ## Scope
 
-The self-hosted Massing stack (API + Postgres + MinIO + Redis + web/desktop clients) as deployed by
+The self-hosted SadSha Build Pro stack (API + Postgres + MinIO + Redis + web/desktop clients) as deployed by
 an operator, plus the engineering organization's SDLC. Criteria: Security (common criteria) +
 Availability + Confidentiality. Processing Integrity and Privacy can be added when a customer
 requires them.

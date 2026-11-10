@@ -117,7 +117,7 @@ cert automatically, enforces auth (`AEC_RBAC=1`), and sets restart policies.
 sudo ufw allow OpenSSH && sudo ufw allow 80,443/tcp && sudo ufw enable
 
 # 3. clone + configure secrets (REQUIRED in prod)
-git clone https://github.com/ibuilder/massing.git && cd Massing
+git clone https://github.com/fnjlabs-arch/massing.git && cd SadSha Build Pro
 cp .env.example .env       # set POSTGRES_PASSWORD, S3_ACCESS_KEY/SECRET, AEC_API_KEY, AEC_AUTH_SECRET
 
 # 4. bring it up behind Caddy (auto-HTTPS for $DOMAIN)
@@ -180,7 +180,7 @@ ships a complete, double-clickable app on its own (it opens the system browser).
 
 ## Mobile apps (Capacitor — iOS / Android)
 The same web build (`dist`) wraps into native iOS/Android apps via Capacitor (`capacitor.config.ts`,
-appId `com.ibuilder.aecbim`). A phone has no local Python backend, so a mobile build must target a
+appId `com.sadsha.buildpro`). A phone has no local Python backend, so a mobile build must target a
 hosted API.
 
 1. **Point at your API:** edit `apps/web/.env.mobile` → `VITE_API_URL=https://your-cloud-api`

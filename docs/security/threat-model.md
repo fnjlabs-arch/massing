@@ -1,4 +1,4 @@
-# Massing — application threat model & security verification
+# SadSha Build Pro — application threat model & security verification
 
 *R19 SEC-THREAT (2026-07-24). A STRIDE-organized threat model over the real attack surfaces of a
 self-hosted deployment, plus a verification matrix mapping each control to its implementation and

@@ -1,32 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-<defs>
-  <linearGradient id="ic_edge" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#2DE2E6"/><stop offset="0.5" stop-color="#5B8CFF"/><stop offset="1" stop-color="#B14CFF"/>
-  </linearGradient>
-  <linearGradient id="ic_floor" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0" stop-color="#2DE2E6"/><stop offset="1" stop-color="#B14CFF"/>
-  </linearGradient>
-  <linearGradient id="ic_faceT" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#1BC9E8"/><stop offset="1" stop-color="#3A6BFF"/>
-  </linearGradient>
-  <linearGradient id="ic_faceL" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#173A8C"/><stop offset="1" stop-color="#0C1A4A"/>
-  </linearGradient>
-  <linearGradient id="ic_faceR" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0" stop-color="#6A2BC9"/><stop offset="1" stop-color="#2A0F66"/>
-  </linearGradient>
-  <filter id="ic_glow" x="-40%" y="-40%" width="180%" height="180%">
-    <feGaussianBlur stdDeviation="2.4" result="b"/>
-    <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-</defs>
-<defs>
-  <radialGradient id="ic_bg" cx="0.5" cy="0.35" r="0.9">
-    <stop offset="0" stop-color="#141B3A"/><stop offset="0.5" stop-color="#0B1126"/><stop offset="1" stop-color="#05070F"/>
-  </radialGradient>
-</defs>
-<rect width="512" height="512" rx="112" fill="#070A18"/>
-<rect width="512" height="512" rx="112" fill="url(#ic_bg)"/>
-<rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="url(#ic_edge)" stroke-opacity="0.45" stroke-width="2.5"/>
-<polygon points="190.00,230.11 339.29,316.30 190.00,402.49 40.71,316.30" fill="url(#ic_floor)" fill-opacity="0.18" stroke="url(#ic_edge)" stroke-opacity="0.35" stroke-width="1.2"/><line x1="239.8" y1="258.8" x2="90.5" y2="345.0" stroke="url(#ic_edge)" stroke-opacity="0.18" stroke-width="0.8"/><line x1="140.2" y1="258.8" x2="289.5" y2="345.0" stroke="url(#ic_edge)" stroke-opacity="0.18" stroke-width="0.8"/><line x1="289.5" y1="287.6" x2="140.2" y2="373.8" stroke="url(#ic_edge)" stroke-opacity="0.18" stroke-width="0.8"/><line x1="90.5" y1="287.6" x2="239.8" y2="373.8" stroke="url(#ic_edge)" stroke-opacity="0.18" stroke-width="0.8"/><g filter="url(#ic_glow)"><polygon points="132.58,177.07 190.00,143.92 190.00,250.00 132.58,283.15" fill="url(#ic_faceL)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="247.42,177.07 190.00,210.22 190.00,316.30 247.42,283.15" fill="url(#ic_faceR)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="190.00,143.92 247.42,177.07 190.00,210.22 132.58,177.07" fill="url(#ic_faceT)" fill-opacity="0.9" stroke="url(#ic_edge)" stroke-width="1.8" stroke-linejoin="round"/><polygon points="190.00,130.66 247.42,97.51 247.42,283.15 190.00,316.30" fill="url(#ic_faceL)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="304.83,130.66 247.42,163.81 247.42,349.45 304.83,316.30" fill="url(#ic_faceR)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="247.42,97.51 304.83,130.66 247.42,163.81 190.00,130.66" fill="url(#ic_faceT)" fill-opacity="0.9" stroke="url(#ic_edge)" stroke-width="1.8" stroke-linejoin="round"/><polygon points="75.17,170.44 132.58,137.29 132.58,283.15 75.17,316.30" fill="url(#ic_faceL)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="190.00,170.44 132.58,203.59 132.58,349.45 190.00,316.30" fill="url(#ic_faceR)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="132.58,137.29 190.00,170.44 132.58,203.59 75.17,170.44" fill="url(#ic_faceT)" fill-opacity="0.9" stroke="url(#ic_edge)" stroke-width="1.8" stroke-linejoin="round"/><polygon points="132.58,283.15 190.00,250.00 190.00,316.30 132.58,349.45" fill="url(#ic_faceL)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="247.42,283.15 190.00,316.30 190.00,382.60 247.42,349.45" fill="url(#ic_faceR)" fill-opacity="0.55" stroke="url(#ic_edge)" stroke-width="1.6" stroke-linejoin="round"/><polygon points="190.00,250.00 247.42,283.15 190.00,316.30 132.58,283.15" fill="url(#ic_faceT)" fill-opacity="0.9" stroke="url(#ic_edge)" stroke-width="1.8" stroke-linejoin="round"/></g>
+  <defs>
+    <linearGradient id="sbp_edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2DE2E6"/><stop offset="0.5" stop-color="#5B8CFF"/><stop offset="1" stop-color="#B14CFF"/>
+    </linearGradient>
+  </defs>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="url(#sbp_edge)"/>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="6"/>
+  <text x="256" y="356" font-family="Arial, Helvetica, sans-serif" font-size="300" font-weight="bold" fill="#ffffff" text-anchor="middle">S</text>
 </svg>

@@ -1,4 +1,4 @@
-"""Site feasibility / zoning envelope — the "Massing" feasibility study.
+"""Site feasibility / zoning envelope — the "SadSha Build Pro" feasibility study.
 
 Given the project's `zoning` record (site area + zoning controls: FAR, height, lot coverage,
 setbacks, open space, parking, unit size), compute the **maximum buildable envelope**: allowed

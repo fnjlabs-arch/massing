@@ -1,10 +1,10 @@
-# Massing — in-browser BIM authoring · construction docs · GC portal · proforma
+# SadSha Build Pro — in-browser BIM authoring · construction docs · GC portal · proforma
 
-![Massing — one IFC model from acquisition to turnover](docs/img/og-image.png)
+![SadSha Build Pro — one IFC model from acquisition to turnover](docs/img/og-image.png)
 
-[![CI](https://github.com/ibuilder/massing/actions/workflows/ci.yml/badge.svg)](https://github.com/ibuilder/massing/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/ibuilder/massing?label=release&color=4a8cff)](https://github.com/ibuilder/massing/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/ibuilder/massing/total?color=33d17a)](https://github.com/ibuilder/massing/releases)
+[![CI](https://github.com/fnjlabs-arch/massing/actions/workflows/ci.yml/badge.svg)](https://github.com/fnjlabs-arch/massing/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/fnjlabs-arch/massing?label=release&color=4a8cff)](https://github.com/fnjlabs-arch/massing/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/fnjlabs-arch/massing/total?color=33d17a)](https://github.com/fnjlabs-arch/massing/releases)
 ![Platforms](https://img.shields.io/badge/desktop-Windows%20%C2%B7%20macOS%20%C2%B7%20Linux-555)
 ![IFC-native](https://img.shields.io/badge/IFC-native-4a8cff)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -58,7 +58,7 @@
 
 ![Generate a building from a zoning envelope, then underwrite the deal](docs/img/generate-build.gif)
 
-**[▶ Live demo](https://massing.build/app/)** · **[⬇ Download (Win/macOS/Linux)](https://github.com/ibuilder/massing/releases/latest)** · **[📚 Guides](https://massing.build/guide.html)** · **[📄 Project page](https://massing.build/)**
+**[▶ Live demo](https://massing.build/app/)** · **[⬇ Download (Win/macOS/Linux)](https://github.com/fnjlabs-arch/massing/releases/latest)** · **[📚 Guides](https://massing.build/guide.html)** · **[📄 Project page](https://massing.build/)**
 
 ### Quickstart — self-host the full stack
 
@@ -67,7 +67,7 @@ docker compose --profile full up --build      # web → http://localhost:8080 ·
 docker compose --profile full --profile seed run --rm seed   # optional: a demo project across every module
 ```
 
-Or install the signed desktop app (single-project, auto-updating) from the [latest release](https://github.com/ibuilder/massing/releases/latest).
+Or install the signed desktop app (single-project, auto-updating) from the [latest release](https://github.com/fnjlabs-arch/massing/releases/latest).
 
 **Built on** [That Open](https://github.com/ThatOpen) (Fragments + web-ifc, MIT) · [IfcOpenShell](https://ifcopenshell.org) (LGPL) · [three.js](https://threejs.org) · [FastAPI](https://fastapi.tiangolo.com) · [Tauri](https://tauri.app). IFC is the source of truth — no proprietary format, no per-seat license.
 
@@ -317,7 +317,7 @@ rebuild, and the tests that hold each claim in place — is in
 ## Install
 
 ```bash
-git clone https://github.com/ibuilder/massing.git && cd massing
+git clone https://github.com/fnjlabs-arch/massing.git && cd massing
 cp .env.example .env            # set secrets + AEC_RBAC=1 for anything but local dev
 docker compose --profile full up --build      # web → http://localhost:8080  (api → :8000)
 
@@ -330,7 +330,7 @@ cross-origin isolation web-ifc needs, and persists Postgres/MinIO/IFC volumes. `
 every knob.
 
 Prefer not to run a stack? Install the signed **desktop app** (single-project, auto-updating, free) from
-[the latest release](https://github.com/ibuilder/massing/releases/latest).
+[the latest release](https://github.com/fnjlabs-arch/massing/releases/latest).
 
 Building from source needs **Node 24 and Python 3.12** — Node 18 does not build the web app. The dev
 setup, the first-project walkthrough and the test commands are all in
@@ -392,4 +392,4 @@ paid/flagged. See [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 
 ## Author
 
-Created by **Matthew M. Emma** — built with [Claude Code](https://claude.com/claude-code) as AI assistant.
+Created by **SadSha** — built with [Claude Code](https://claude.com/claude-code) as AI assistant.
