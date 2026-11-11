@@ -28,6 +28,7 @@ import { withSpecialty } from "./specialty";
 import { withPrecon } from "./precon";
 import { withEntitlements } from "./entitlements";
 import { withRisk } from "./risk";
+import { withSignup } from "./signup";
 import { withMarkup } from "./markup";
 import { withSync } from "./sync";
 import { withCost } from "./cost";
@@ -82,7 +83,7 @@ import type {
 //: `api/mixinStaging.test.ts`; `api/surface.test.ts` floors the method count.
 class _ApiStageA extends withDocuments(withModels(withElements(withDrawingSheets(withDrawingSet(withMarkup(withSync(withConnections(withDocQa(withFinance(withContracts(withAuth(withProforma(withDesignOptions(withRoutines(withCost(withProcurement(withEstimate(withModules(withModel(withSchedule(withLibrary(withAssetRights(withClassification(withAuthoring(HttpCore))))))))))))))))))))))))) {}
 
-class _ApiStageB extends withCoverageMaps(withAcceptanceGates(withCounterpartyRisk(withDesignPerformance(withDetailing(withAnnotate(withCreDeal(withClientPortal(withResilience(withResponsibility(withOperations(withAccounting(withDealMemory(withPdfTools(withCodeCheck(withSpecialty(withIds(withEvm(withRisk(withEntitlements(withPrecon(withAi(withTopics(withMep(_ApiStageA)))))))))))))))))))))))) {}
+class _ApiStageB extends withSignup(withCoverageMaps(withAcceptanceGates(withCounterpartyRisk(withDesignPerformance(withDetailing(withAnnotate(withCreDeal(withClientPortal(withResilience(withResponsibility(withOperations(withAccounting(withDealMemory(withPdfTools(withCodeCheck(withSpecialty(withIds(withEvm(withRisk(withEntitlements(withPrecon(withAi(withTopics(withMep(_ApiStageA))))))))))))))))))))))))) {}
 
 export class ApiClient extends _ApiStageB {
   /**

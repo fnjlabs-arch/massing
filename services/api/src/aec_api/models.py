@@ -56,9 +56,82 @@ class Project(Base):
     # Nullable — projects created before this column stay NULL until something needs an identity,
     # and `_ensure_columns` backfills the column itself on existing DBs.
     asset_id: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    # SaaS multi-tenancy (SadSha Build Pro §1): the org this project belongs to. Nullable so
+    # the additive schema sync backfills existing DBs; NULL = legacy/unassigned, visible only to
+    # platform admins while RBAC is on (see rbac._check_project_org). Module tables need no org
+    # column — all GC data hangs off Project, so scoping the project scopes everything.
+    org_id: Mapped[str | None] = mapped_column(
+        String, ForeignKey("organizations.id"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
     topics: Mapped[list[Topic]] = relationship(back_populates="project", cascade="all, delete-orphan")
+
+
+class Organization(Base):
+    """A SaaS tenant (SadSha Build Pro §1 — the billing/signup agents build on this model).
+
+    One org owns many projects; a user belongs to an org via OrganizationMember. `plan` is the
+    SaaS plan (trial/pro/enterprise — see tiers.py); it is separate from the legacy per-user
+    `User.tier` / `licensing.py` licence-key system, which is the self-host path and is left alone.
+    `status` is the subscription state machine: trialing → active → past_due → canceled.
+    Billing ids are filled by the billing agent's webhook handler; all nullable so an org can
+    exist before any payment provider has seen it."""
+    __tablename__ = "organizations"
+    # `slug` uniqueness as a unique INDEX, not a UniqueConstraint, matching the repo's convention
+    # (see ElementVerification): the two are different objects on Postgres and indistinguishable
+    # on SQLite, and `alembic check` drifts permanently if the migration and the model disagree.
+    __table_args__ = (Index("uq_organizations_slug", "slug", unique=True),)
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    slug: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+    plan: Mapped[str] = mapped_column(String, default="trial")
+    status: Mapped[str] = mapped_column(String, default="trialing")
+    trial_ends_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    billing_provider: Mapped[str | None] = mapped_column(String, nullable=True)
+    billing_customer_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    billing_subscription_id: Mapped[str | None] = mapped_column(String, nullable=True)
+    # When the org entered past_due (trial expiry or a failed payment): the 7-day grace
+    # clock in billing.refresh_org_status runs from here (see billing.py). NULL unless the
+    # org has ever been past_due; cleared when the org leaves past_due.
+    past_due_since: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    seats: Mapped[int] = mapped_column(Integer, default=5)
+
+
+class BillingWebhookEvent(Base):
+    """One processed billing-provider webhook delivery, for idempotency (SadSha Build Pro §2).
+
+    Providers retry deliveries (Lemon Squeezy retries up to 3 more times on a non-200), and
+    a subscription_updated fires again for every state change — so "apply this event" must be
+    safe to run twice. `event_key` is the provider-stable identity of one delivery
+    (provider + event name + object id + object updated_at for Lemon Squeezy; see
+    billing_lemonsqueezy.event_key_for), unique-indexed so a concurrent duplicate insert
+    fails instead of double-applying. The row is the record; the payload itself is NOT
+    stored (it carries customer emails and provider ids we do not need to keep)."""
+    __tablename__ = "billing_webhook_events"
+    __table_args__ = (Index("uq_billing_webhook_events_key", "event_key", unique=True),)
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
+    provider: Mapped[str] = mapped_column(String, nullable=False)
+    event_key: Mapped[str] = mapped_column(String, nullable=False, index=True)
+    event_name: Mapped[str] = mapped_column(String, nullable=False)
+    org_id: Mapped[str | None] = mapped_column(String, nullable=True, index=True)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
+
+
+class OrganizationMember(Base):
+    """A user's membership in an org (role owner/admin/member). One row per (org, user) — the
+    unique index is what makes "remove from org" mean something (see ProjectMember's note: a
+    read-decide-insert without it lets a seeding race mint a duplicate that revocation then
+    cannot fully remove). Membership here does NOT grant project access by itself: a project
+    still needs its own ProjectMember row, and rbac additionally requires the project's org to
+    be one of the caller's orgs."""
+    __tablename__ = "organization_members"
+    __table_args__ = (Index("uq_organization_members_org_user", "org_id", "user", unique=True),)
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=_uuid)
+    org_id: Mapped[str] = mapped_column(ForeignKey("organizations.id"), index=True)
+    user: Mapped[str] = mapped_column(String, ForeignKey("users.username"), index=True)
+    role: Mapped[str] = mapped_column(String, default="member")   # owner | admin | member
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_now)
 
 
 class CostDataset(Base):

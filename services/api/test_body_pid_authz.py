@@ -50,9 +50,10 @@ for _f in ("./test_body_pid_authz.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api import auth  # noqa: E402
 from aec_api.db import Base, SessionLocal, engine  # noqa: E402
 from aec_api.main import app  # noqa: E402
-from aec_api.models import Project, ProjectMember  # noqa: E402
+from aec_api.models import Organization, OrganizationMember, Project, ProjectMember, User  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 client = TestClient(app)
@@ -70,7 +71,19 @@ def check(name: str, ok: bool, detail: str = "") -> None:
 
 
 db = SessionLocal()
-db.add(Project(id="secret-deal", name="Confidential Deal",
+# Tenancy fixture: the suite runs with RBAC on, so the owner needs an org and the directly
+# seeded project needs that org_id, or the org gate (SadSha Build Pro §1) refuses the very
+# member this suite is about. Plan pro — the suite is about body-pid authz, not the trial cap.
+org = Organization(name="Secret Deal Org", slug="secret-deal-org", plan="pro",
+                   status="active")
+db.add(org)
+db.flush()
+if db.get(User, "owner") is None:
+    db.add(User(username="owner", password_hash=auth.hash_password("Testpass123"),
+                role="user"))
+    db.flush()
+db.add(OrganizationMember(org_id=org.id, user="owner", role="owner"))
+db.add(Project(id="secret-deal", name="Confidential Deal", org_id=org.id,
                dev_property={"purchase_price": LAND},
                dev_budget={"lines": [{"category": "hard", "unit_cost": HARD_PSF,
                                       "quantity": 1000, "description": "shell $/sf"}]}))

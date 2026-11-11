@@ -75,13 +75,23 @@ MUTATING = {"post", "put", "patch", "delete"}
 #: it serves is the one thing a third party needs in order to check a release we issued — the whole
 #: point of the endpoint. Nothing under this prefix touches project or tenant state.
 #:
+#: `/billing`, `/organizations` and `/signup` (SadSha Build Pro §2/§3) are recorded here for the
+#: same reason, and NOT in `_PROTECTED_PREFIXES` on purpose: the prefix gate would refuse anonymous
+#: callers on EVERY route under the prefix, and two of them must serve anonymous callers — `POST
+#: /signup` (the front door, before the caller has an identity) and `POST
+#: /billing/webhook/lemonsqueezy` (Lemon Squeezy calls it with a signature, not a session). Every
+#: other route under these prefixes carries `require_identified` plus its own org-membership check
+#: (asserted by `test_global_authz`); the two public ones are argued in that file's BASELINE. So the
+#: middleware net would add nothing to the gated routes and would break the two public ones — the
+#: safety net is for routes with no gate of their own, and these have theirs.
+#:
 #: (The old READ-ONLY note said the status route returns "never the key itself". That was true when
 #: written and is not any more: it now serves the **public** key deliberately. The private seed still
 #: never leaves the server, and `test_asset_verify` asserts the seed is absent from the response.)
 KNOWN_UNCOVERED_MUTATING = {
-    "/admin", "/asset-rights", "/bcf", "/client-errors", "/compute", "/cost", "/esign", "/estimate", "/firm",
-    "/generate", "/ids", "/jurisdiction", "/license", "/massing", "/metrics", "/parcels", "/pdf",
-    "/plugins", "/samples", "/schedule", "/scim", "/shared", "/structure", "/templates", "/test-fit",
+    "/admin", "/asset-rights", "/bcf", "/billing", "/client-errors", "/compute", "/cost", "/esign", "/estimate", "/firm",
+    "/generate", "/ids", "/jurisdiction", "/license", "/massing", "/metrics", "/organizations", "/parcels", "/pdf",
+    "/plugins", "/samples", "/schedule", "/scim", "/shared", "/signup", "/structure", "/templates", "/test-fit",
 }
 
 #: Uncovered read-only prefixes. Lower risk (a GET cannot change state) but still outside the net,

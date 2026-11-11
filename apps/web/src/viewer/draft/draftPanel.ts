@@ -13,6 +13,13 @@ import {
 import { draftGlyph, glyphElement, normaliseIfcClass } from "./draftGlyph";
 import { previewElement, previewFor, warningsFor } from "./draftPreview";
 import { setDraftDragKey } from "../railDrag";
+import { bimUpgradeMessage } from "../../shell/bimGating";
+
+/** Why drafting is blocked, when the plan (not the model) is the reason — BIM gating
+ *  (§5): the Draft panel's canAuthor() is false for a trial/Pro org even with a model
+ *  loaded, so the generic "connect a project" message would be the wrong explanation. */
+const planBlockedMessage = (): string | null =>
+  document.body.dataset.capBim === "off" ? bimUpgradeMessage(null) : null;
 
 export interface ArmedDraft {
   key: string;
@@ -250,7 +257,7 @@ export function installDraftPanel(deps: DraftPanelDeps): DraftPanelHandle {
     place.classList.toggle("on", armedKey === s.key);
     place.onclick = () => {
       if (armedKey === s.key) { arm(null); return; }
-      if (!deps.canAuthor()) { deps.notify("connect a project with a source IFC to draft", "error"); return; }
+      if (!deps.canAuthor()) { deps.notify(planBlockedMessage() ?? "connect a project with a source IFC to draft", "error"); return; }
       const vals = readValues();
       const armed: ArmedDraft = {
         key: s.key, label: s.label, recipe: s.recipe, points: s.points, ifcClass: s.ifcClass, hint: s.hint,
@@ -292,7 +299,7 @@ export function installDraftPanel(deps: DraftPanelDeps): DraftPanelHandle {
       selected = s;
       renderList();
       renderForm();
-      if (!deps.canAuthor()) { deps.notify("connect a project with a source IFC to draft", "error"); return null; }
+      if (!deps.canAuthor()) { deps.notify(planBlockedMessage() ?? "connect a project with a source IFC to draft", "error"); return null; }
       const vals: ParamValues = {};
       for (const p of s.params) vals[p.key] = p.default;   // arm straight with defaults (keyboard flow)
       arm({ key: s.key, label: s.label, recipe: s.recipe, points: s.points, ifcClass: s.ifcClass,

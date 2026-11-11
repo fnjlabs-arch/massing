@@ -118,6 +118,10 @@ BASELINE = {
     # public auth surface — necessarily reachable without an identity
     ("POST", "/auth/login"), ("POST", "/auth/logout"), ("POST", "/auth/register"),
     ("POST", "/auth/reset"), ("POST", "/auth/mfa/verify"), ("POST", "/auth/saml/acs"),
+    # (SadSha Build Pro §3) self-serve signup: the front door has to be reachable before
+    # the caller HAS an identity, exactly like /auth/register. It mints one account + one
+    # trial org and nothing else; it cannot touch another org.
+    ("POST", "/signup"),
     # authenticated self-service: operates on the CALLER's own record, and 401s anonymously
     ("POST", "/auth/logout-all"), ("POST", "/auth/password"),
     ("POST", "/auth/mfa/setup"), ("POST", "/auth/mfa/enable"), ("POST", "/auth/mfa/disable"),
@@ -125,6 +129,11 @@ BASELINE = {
     ("POST", "/shared/{token}/comment"), ("POST", "/shared/{token}/decision"),
     # signed webhook
     ("POST", "/esign/webhook"),
+    # (SadSha Build Pro §2) Lemon Squeezy webhook: the provider calls it with a signature,
+    # not a bearer token, exactly like /esign/webhook. The signature IS the gate (a bad one
+    # is a 401 before anything is applied); the route carries no identity dependency because
+    # there is no identity to carry.
+    ("POST", "/billing/webhook/lemonsqueezy"),
     # stateless compute — no stored state; the middleware comment exempts this class explicitly
     ("POST", "/compute/graph"), ("POST", "/generate/massing/preview"),
     ("POST", "/massing/optioneer"), ("POST", "/massing/optioneer/recipes"),

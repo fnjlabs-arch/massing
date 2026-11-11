@@ -48,6 +48,9 @@ export interface ProfileDeps {
   /** massing.cloud link state; `null` when the status call failed (offline) — rendered as such. */
   cloud: CloudStatus | null;
   tierLabel: string;
+  /** SadSha Build Pro billing section (plan / trial clock / upgrade). Injected, not
+   *  imported — see the module docstring. Absent on deployments without orgs/billing. */
+  billing?: { build: (body: HTMLElement) => void } | null;
   actions: ProfileActions;
 }
 
@@ -109,6 +112,13 @@ export function openProfileSettings(deps: ProfileDeps, initial = "profile"): voi
     { id: "security", label: "Security", build: (b) => buildSecurity(b, actions) },
     { id: "preferences", label: "Preferences", build: (b) => buildPreferences(b, actions) },
   ];
+  // Billing is a SECTION, present only when the deployment has orgs/billing — the same
+  // shape as Administration above, and for the same reason: a capability that appears
+  // and disappears should add or remove one section, not a separate console.
+  if (deps.billing) {
+    const buildBilling = deps.billing.build;
+    sections.push({ id: "billing", label: "Billing", build: (b) => buildBilling(b) });
+  }
   // The whole point of this panel: administration is a SECTION, present only when the account
   // carries the capability — not a separate console reached from somewhere else.
   if (platformAdmin) {

@@ -35,12 +35,25 @@ if [ -n "$API_CID" ]; then
     sh -c 'tar czf /bak/ifc-data.tgz -C /app/ifc . 2>/dev/null || echo "(no /app/ifc)"'
 fi
 
+# Caddy TLS state (caddy-data volume: issued certificates + ACME account). The certs are
+# re-issuable via Let's Encrypt, but a restore without them forces a fresh issuance against
+# the rate limit (50 certificates per domain per week) and leaves the site on HTTP until
+# it succeeds — so back them up with the rest. Redis is deliberately NOT backed up: its
+# counters are ephemeral by design (see docker-compose.prod.yml).
+CADDY_CID="$($DC ps -q caddy 2>/dev/null || true)"
+if [ -n "$CADDY_CID" ]; then
+  echo "==> Caddy TLS data"
+  docker run --rm --volumes-from "$CADDY_CID" -v "$STAGE":/bak alpine \
+    tar czf /bak/caddy-data.tgz -C /data . 2>/dev/null || echo "(no caddy data)"
+fi
+
 cat > "$STAGE/MANIFEST.txt" <<EOF
 AEC BIM backup
 created:   $TS
 postgres:  db=$PGDB user=$PGUSER (db.sql.gz, --clean --if-exists)
 minio:     minio-data.tgz (all buckets/objects)
 ifc:       ifc-data.tgz (uploaded source IFCs, if present)
+caddy:     caddy-data.tgz (TLS certificates + ACME account, if present)
 restore:   scripts/restore.sh <this-file>
 EOF
 

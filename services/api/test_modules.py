@@ -15,14 +15,41 @@ for f in ("./test_mod.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember  # noqa: E402
 
 
 def H(user):  # act as a given user (X-User identifies the party)
     return {"X-User": user}
 
 
+def _seed_org():
+    """Tenancy fixture: the suite runs with RBAC on, so project creation/access needs the
+    callers in an org (SadSha Build Pro §1). One pro org holding the GC + the three parties
+    this suite grants project membership to (the GC creates two projects, so the plan is pro,
+    not trial — the suite is about module workflows, not the trial cap)."""
+    with SessionLocal() as db:
+        org = Organization(name="Mega Builders", slug="mega-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        # NOTE: no User rows here on purpose, for TWO reasons. (1) The suite registers "gc" as
+        # an account later (email-digest section) and expects 201 — and `register` bootstraps
+        # the first account as admin only when the users table is EMPTY, so any pre-created
+        # row would turn that 201 into a 403 ("an admin token is required"). (2)
+        # OrganizationMember.user references users.username, but SQLite does not enforce the
+        # FK and the org lookup only reads the membership table. On an engine that DOES
+        # enforce it (Postgres), this fixture would need the User rows AND a different
+        # register expectation — that is a known Postgres-only caveat, not a SQLite one.
+        for username, role in (("gc", "owner"), ("consultant", "member"), ("sub", "member"),
+                               ("owner", "member")):
+            db.add(OrganizationMember(org_id=org.id, user=username, role=role))
+        db.commit()
+
+
 with TestClient(app) as c:
+    _seed_org()
     # module catalog loaded from module.json files
     mods = {m["key"]: m for m in c.get("/modules").json()}
     assert {"rfi", "submittal", "pco_request", "noc", "directive", "proposal", "cor", "eticket"} <= set(mods)

@@ -280,10 +280,10 @@ from datetime import datetime, timedelta, timezone  # noqa: E402
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from aec_api import fin_ingest  # noqa: E402
+from aec_api import auth, fin_ingest  # noqa: E402
 from aec_api.db import Base, SessionLocal, engine  # noqa: E402
 from aec_api.main import app  # noqa: E402
-from aec_api.models import AuditLog, RecordActivity  # noqa: E402
+from aec_api.models import AuditLog, Organization, OrganizationMember, RecordActivity, User  # noqa: E402
 
 Base.metadata.create_all(bind=engine)
 NOW = datetime.now(timezone.utc)
@@ -293,7 +293,25 @@ def _hdr(user: str) -> dict[str, str]:
     return {"X-User": user}
 
 
+def _seed_org():
+    """Tenancy fixture: the suite runs with RBAC on, so project creation needs the caller in
+    an org (SadSha Build Pro §1). One pro org holding gc; the suite is about the limit
+    filter, not the trial cap, so the plan is pro."""
+    with SessionLocal() as db:
+        org = Organization(name="Limit Builders", slug="limit-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        if db.get(User, "gc") is None:
+            db.add(User(username="gc", password_hash=auth.hash_password("Testpass123"),
+                        role="user"))
+            db.flush()
+        db.add(OrganizationMember(org_id=org.id, user="gc", role="owner"))
+        db.commit()
+
+
 with TestClient(app) as client:
+    _seed_org()
     pid = client.post("/projects", headers=_hdr("gc"), json={"name": "Busy Tower"}).json()["id"]
     mine = client.post(f"/projects/{pid}/modules/rfi", headers=_hdr("gc"), json={
         "assignee": "ann", "data": {"subject": "Slab edge detail", "question": "OK to core?"}},

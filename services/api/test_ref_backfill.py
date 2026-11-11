@@ -29,10 +29,30 @@ for _f in ("./test_ref_backfill.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api import auth  # noqa: E402
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember, User  # noqa: E402
 from aec_api.ref_backfill import normalize, pairs_for  # noqa: E402
 
 H = {"X-User": "gc"}
+
+
+def _seed_org():
+    """Tenancy fixture: the suite runs with RBAC on, so project creation needs the caller in
+    an org (SadSha Build Pro §1). One pro org holding gc; the suite is about backfill
+    matching, not the trial cap, so the plan is pro."""
+    with SessionLocal() as db:
+        org = Organization(name="Backfill Builders", slug="backfill-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        if db.get(User, "gc") is None:
+            db.add(User(username="gc", password_hash=auth.hash_password("Testpass123"),
+                        role="user"))
+            db.flush()
+        db.add(OrganizationMember(org_id=org.id, user="gc", role="owner"))
+        db.commit()
 
 # ---- 1. normalisation folds only what carries no identity --------------------------------------
 assert normalize("Acme Electrical Inc.") == normalize("acme  electrical")
@@ -47,6 +67,7 @@ assert normalize("Bldg A") != normalize("Building A")               # no abbrevi
 assert normalize("Level 2") != normalize("Level 20")                # no prefix matching
 
 with TestClient(app) as c:
+    _seed_org()
     # ---- 2. the pair list comes from the declared config, not a hand-kept list ------------------
     # INSIDE the client block on purpose: `REGISTRY` is populated when the app starts, so calling
     # `pairs_for` at import time returns [] and every assertion below it passes vacuously. That is the

@@ -994,7 +994,9 @@ export function initViewerApp(ctx: ViewerCtx): ViewerApp {
   // served by spending one of eight primary slots on something the caller cannot do.
   relayoutTools = () => toolbarView.update({
     selection: !!selectedGuid,
-    canEdit: document.body.dataset.capEdit !== "off",
+    // BIM gating (§5): author verbs need the role AND the Enterprise plan — capBim is
+    // set by main.ts from GET /projects/{pid}/bim-access; unset in dev = allowed.
+    canEdit: document.body.dataset.capEdit !== "off" && document.body.dataset.capBim !== "off",
   });
   relayoutTools();
   if (toolbarView.unlaid().length) {
@@ -1649,7 +1651,7 @@ export function initViewerApp(ctx: ViewerCtx): ViewerApp {
         },
         fetchContent: async () => flattenContentCatalog(await api.contentCatalog()),
         arm: (a) => { armed = a; armPts.length = 0; setDynBuf(""); },  // re-arm resets the dyn HUD
-        notify, canAuthor: () => !!projectId && hasIfc,
+        notify, canAuthor: () => !!projectId && hasIfc && document.body.dataset.capBim !== "off",
       });
     }
 

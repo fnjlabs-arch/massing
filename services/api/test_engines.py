@@ -12,13 +12,29 @@ from aec_api import tiers as ent  # noqa: E402
 assert ent.normalize(None) == "free"
 assert ent.normalize("bogus") == "free"
 assert ent.normalize("enterprise") == "enterprise"
-# free unlocks everything today (product decision) — every tier returns the full feature set
-for tier in (None, "free", "pro", "enterprise"):
+assert ent.normalize("trial") == "trial"
+# SaaS plan matrix (Qasim, fixed): the legacy `free` tier still unlocks everything
+# (self-host/open mode), `enterprise` unlocks everything too, but `trial` and `pro` do NOT
+# unlock BIM authoring — it is the higher-tier bonus. The portal itself is never gated.
+assert ent.features_for("free") and all(ent.features_for("free").values())
+assert ent.features_for("enterprise") and all(ent.features_for("enterprise").values())
+for tier in ("trial", "pro"):
     feats = ent.features_for(tier)
-    assert feats and all(feats.values()), (tier, feats)
+    assert feats["portal"] is True and feats["bim_authoring"] is False, (tier, feats)
+    assert feats["viewer"] is True and feats["ai"] is True, (tier, feats)
+for tier in (None, "free", "pro", "enterprise"):
     assert ent.allows(tier, "ai") and ent.allows(tier, "viewer"), tier
 # unknown feature is denied, never KeyError
 assert ent.allows("free", "nonexistent_feature") is False
+# numeric limits live behind limits_for, not in the boolean matrix
+assert ent.limits_for("trial") == {"max_projects": 1}
+assert ent.limits_for("pro") == {"max_projects": None}
+assert ent.limits_for("enterprise") == {"max_projects": None}
+assert ent.limits_for(None) == {"max_projects": None}  # unknown → free default
+# SaaS prices (USD/month) — decided by Mili on Qasim's "As you wish" delegation, open to
+# his override; env-configurable, defaults are the decided prices
+assert ent.PRO_PRICE_MONTHLY == 199
+assert ent.ENTERPRISE_PRICE_MONTHLY == 399
 
 # --- dev_property ------------------------------------------------------------
 s = dp.summarize({

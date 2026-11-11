@@ -12,11 +12,36 @@ for f in ("./test_dash.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api import auth  # noqa: E402
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember, User  # noqa: E402
 
 H = lambda u: {"X-User": u}  # noqa: E731
 
+
+def _seed_org():
+    """Tenancy fixture: the suite runs with RBAC on, so project creation/access needs the
+    callers in an org (SadSha Build Pro §1). One pro org holding the GC + the three parties
+    this suite grants project membership to; the suite is about party-tailored dashboards,
+    not the trial cap, so the plan is pro."""
+    with SessionLocal() as db:
+        org = Organization(name="Dashboard Builders", slug="dashboard-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        for username, role in (("gc", "owner"), ("sub", "member"), ("consultant", "member"),
+                               ("owner", "member")):
+            if db.get(User, username) is None:
+                db.add(User(username=username, password_hash=auth.hash_password("Testpass123"),
+                            role="user"))
+                db.flush()
+            db.add(OrganizationMember(org_id=org.id, user=username, role=role))
+        db.commit()
+
+
 with TestClient(app) as c:
+    _seed_org()
     pid = c.post("/projects", json={"name": "Tower"}, headers=H("gc")).json()["id"]
     for u, party in [("sub", "Subcontractor"), ("consultant", "Consultant"), ("owner", "Owner")]:
         c.post(f"/projects/{pid}/members", json={"user": u, "role": "reviewer", "party_role": party}, headers=H("gc"))

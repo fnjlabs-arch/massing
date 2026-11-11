@@ -64,6 +64,8 @@ const DECLARED_SYNCHRONOUS: Record<string, string> = {
     "static help text and three external links. There is nothing here to wait for.",
   "main.ts:pickModelTemplate":
     "a grid built from the in-module MODEL_TEMPLATES constant, with no request behind it.",
+  "main.ts:showBimUpgrade":
+    "static upgrade text and a Got it button, built from the entitlement answer. Nothing is fetched before the user can read it.",
   "main.ts:openProjectBundle":
     "EXCLUDED rather than merely synchronous, and for a different reason: a native FILE CHOOSER sits "
     + "between the user's click and this panel. The interval would be dominated by however long they "

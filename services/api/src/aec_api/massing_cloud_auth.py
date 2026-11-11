@@ -243,8 +243,9 @@ def normalize_tier(raw: Any) -> str:
 
     There are two tier vocabularies in this app and picking the wrong one here is silently
     catastrophic: `licensing.TIER_ORDER` is `free|home|commercial|enterprise` — which is exactly what
-    massing.cloud sends — while `tiers.TIERS` is `free|pro|enterprise`, the per-user entitlement
-    seam on `User.tier`. Running a cloud tier through `tiers.normalize` maps **`commercial` → `free`**,
+    massing.cloud sends — while `tiers.TIERS` is `free|trial|pro|enterprise`, the per-user entitlement
+    seam on `User.tier` (`free` is the legacy self-host tier; `trial|pro|enterprise` are the SaaS
+    plans). Running a cloud tier through `tiers.normalize` maps **`commercial` → `free`**,
     because `commercial` is not in that tuple, and a paying customer would be told they have no
     library. So the cloud tier is normalised here against `licensing`, and converted for storage by
     `app_tier_for` below. Unknown or missing still degrades to `free` — an unreadable plan must never

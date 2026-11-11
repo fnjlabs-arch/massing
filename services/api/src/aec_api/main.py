@@ -29,6 +29,7 @@ from .routers import (
     bcf_api,
     benchmarking,
     bidding,
+    billing,
     bim,
     carbon,
     classify,
@@ -77,6 +78,7 @@ from .routers import (
     saml,
     schedule,
     scim,
+    signup,
     site,
     standards,
     templates,
@@ -562,6 +564,7 @@ if _RATE_RPM > 0:
         return await call_next(request)
 
 app.include_router(bim.router, tags=["bim"])
+app.include_router(billing.router, tags=["billing"])
 app.include_router(bcf_api.router, tags=["bcf-api"])
 app.include_router(properties.router, tags=["properties"])
 app.include_router(plugins.router, tags=["plugins"])
@@ -622,6 +625,7 @@ app.include_router(assistant.router, tags=["assistant"])
 app.include_router(construction.router, tags=["construction"])
 app.include_router(operations.router, tags=["operations"])
 app.include_router(standards.router, tags=["standards"])
+app.include_router(signup.router, tags=["signup"])
 app.include_router(jurisdiction.router, tags=["jurisdiction"])
 app.include_router(observability.router, tags=["observability"])
 
@@ -666,7 +670,12 @@ _CSP = "frame-ancestors 'none'" if not _CSP_ENV else (_CSP_STRICT if _CSP_ENV ==
 # that lacks its own require_role dependency still can't be reached anonymously. Public auth / health /
 # capability / catalog / stateless-compute paths stay open.
 _PROTECTED_PREFIXES = ("/projects", "/proforma", "/connections", "/settings", "/audit", "/auth/users",
-                       "/convert", "/interop", "/pipeline", "/routines", "/cloud", "/agent-packs")
+                       "/convert", "/interop", "/pipeline", "/routines", "/cloud", "/agent-packs",
+                       "/bim-access")
+# `/bim-access` (SadSha Build Pro §5) is here because it serves tenant state: the caller's org
+# entitlements (plan, whether BIM authoring is included). It is read-only and each route already
+# carries `current_user` (plus `require_role("viewer")` on the project-scoped one), so this is
+# defence in depth and NOT the gate — same shape as `/cloud` above.
 # `/agent-packs` (AGENT-TRAIL) is here for the same reason `/audit` is: the estate-wide agent console
 # reads `audit_log` rows spanning every project, which is tenant state at its most sensitive. It is
 # read-only, so `test_global_mutating_authz` would never have looked at it — the prefix gate is what

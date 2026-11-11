@@ -103,6 +103,11 @@ project before trusting it. Keep backups off-box (e.g. `aws s3 cp`, `rclone`) fo
 
 ## Deploy to a cloud VM with HTTPS (turnkey demo / production)
 
+> **SadSha Build Pro on Contabo VPS 8?** Start with the step-by-step guide instead:
+> [saas/contabo-vps8.md](saas/contabo-vps8.md) — server sizing, Docker install, the `.env`
+> table, the bring-up sequence with its go/no-go gate, backups and the update runbook. What
+> follows here is the generic version of the same deploy.
+
 The base stack runs anywhere Docker does. For a public, TLS-secured demo, layer the
 production overlay — it adds a **Caddy** reverse proxy that fetches + renews a Let's Encrypt
 cert automatically, enforces auth (`AEC_RBAC=1`), and sets restart policies.

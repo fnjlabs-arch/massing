@@ -1,6 +1,8 @@
 import "./style.css";
 import { PortalUI } from "./portal/portal";   // eager: the default Construction/Developer workspace
 import { ApiClient, type MassingParams } from "./api/client";
+import { HttpError } from "./api/httpCore";
+import type { BimAccess } from "./api/types";
 import { sealIdentity } from "./api/assetRights";
 import { toast, escapeHtml, safeUrl } from "./ui/feedback";
 import { showResult } from "./ui/result";
@@ -9,6 +11,7 @@ import { offersReturn, returnLabel, returnTarget, returnTitle } from "./shell/ws
 import { headerAction, renderHeaderAction } from "./shell/nextAction";
 import { pinnedItems, renderPinnedRail } from "./shell/pinnedRail";
 import { ROOM_HOST, destRoom } from "./shell/spine";
+import { bimAuthoringAllowed, bimUpgradeMessage } from "./shell/bimGating";
 import { renderVitals } from "./shell/vitalsBar";
 import { setRoomOpen } from "./portal/prefs";
 import { autoCheck, checkForUpdates, currentVersion } from "./ui/update";
@@ -1597,9 +1600,33 @@ function pickModelTemplate(): Promise<typeof MODEL_TEMPLATES[number] | null> {
   });
 }
 
+/** BIM upgrade prompt (§5): Enterprise $399/mo includes BIM authoring. The portal is
+ *  untouched by the gate — say so, or a Pro user reads this as a paywall on their work.
+ *  `serverMessage` is the API's own 403 detail when the gate itself answered. */
+function showBimUpgrade(access: BimAccess | null, serverMessage?: string): void {
+  const { card, close } = modalShell("BIM authoring needs Enterprise", 420);
+  const msg = document.createElement("div");
+  msg.textContent = serverMessage ?? bimUpgradeMessage(access);
+  card.appendChild(msg);
+  const note = document.createElement("div");
+  note.className = "meta";
+  note.textContent = "Your GC portal — RFIs, pay apps, schedule, safety and everything else — is unaffected. Only model authoring needs Enterprise.";
+  card.appendChild(note);
+  const ok = document.createElement("button");
+  ok.className = "tool-btn"; ok.textContent = "Got it";
+  ok.onclick = () => close();
+  card.appendChild(ok);
+}
+
 /** Start a new MODEL: pick a template (blank or a small editable starter), create the project, author
  *  the model, and land in the Model workspace ready to draw. The "make a model" entry point. */
 async function startModeling() {
+  // BIM gating (§5): a new model IS authoring — check before creating a project, so a
+  // trial user doesn't burn their one-project cap on an attempt the API would 403.
+  try {
+    const access = await api.myBimAccess();
+    if (!bimAuthoringAllowed(access)) { showBimUpgrade(access); return; }
+  } catch { /* transient error: fall through and let the API gate answer */ }
   const tpl = await pickModelTemplate();
   if (!tpl) return;
   const name = await askText("New model", { label: "Name your model:", value: tpl.params?.name ?? "New Model" });
@@ -1612,7 +1639,11 @@ async function startModeling() {
     localStorage.setItem("workspace", "model");   // land in the Model workspace, ready to author
     sessionStorage.setItem("author-open", "1");    // signal the viewer to open the Draft/Author panel
     window.location.search = `?project=${p.id}`;
-  } catch { toast("Couldn't start a model (sign in as an editor?)", "error"); }
+  } catch (e) {
+    // the API gate is the enforcement point: a 403 here IS the upgrade message, not a sign-in problem
+    if (e instanceof HttpError && e.status === 403) { showBimUpgrade(null, e.message); return; }
+    toast("Couldn't start a model (sign in as an editor?)", "error");
+  }
 }
 
 function buildProjectPicker(projects: { id: string; name: string; model_kind?: string | null }[]) {
@@ -1916,6 +1947,7 @@ let lastMembershipProject: string | null = null;
 async function applyCapabilities() {
   let review = true, edit = true, admin = true;
   let party: string | null = null, rbac = false;
+  let bim = true;   // BIM authoring (SadSha Build Pro §5): Enterprise-only; viewing stays open
   if (connected && projectId) {
     try {
       const m = await api.myRole(projectId);
@@ -1925,6 +1957,9 @@ async function applyCapabilities() {
         review = r >= (CAP_RANK.reviewer ?? 0); edit = r >= (CAP_RANK.editor ?? 0); admin = r >= (CAP_RANK.admin ?? 0);
       }
     } catch { /* keep defaults (don't hide on a transient error) */ }
+    try {
+      bim = bimAuthoringAllowed(await api.bimAccess(projectId));
+    } catch { /* keep default (don't hide authoring on a transient error) */ }
   }
   isProjectAdmin = admin && !!projectId;
   capParty = party;
@@ -1932,6 +1967,7 @@ async function applyCapabilities() {
   b.dataset.capReview = review ? "on" : "off";
   b.dataset.capEdit = edit ? "on" : "off";
   b.dataset.capAdmin = admin ? "on" : "off";
+  b.dataset.capBim = bim ? "on" : "off";
   // aria-disabled, not `disabled`: a disabled button is removed from the tab order, which would put
   // the explanation out of reach of exactly the keyboard user most likely to need it
   for (const el of document.querySelectorAll<HTMLElement>("[data-cap]")) annotateCap(el);

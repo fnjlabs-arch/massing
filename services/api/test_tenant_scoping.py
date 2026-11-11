@@ -15,16 +15,46 @@ if os.path.exists(_f):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api import auth  # noqa: E402
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember, Project, User  # noqa: E402
 
 ADMIN = {"X-User": "api-key"}
 A = {"X-User": "alice"}
 B = {"X-User": "bob"}
 
+
+def _seed_orgs():
+    """Tenancy fixture: the suite runs with RBAC on, so alice/bob each need an org — and the
+    api-key-created projects need their org_id set, or the org gate (SadSha Build Pro §1)
+    refuses the very members this suite is about. Returns (org_a, org_b)."""
+    with SessionLocal() as db:
+        orgs = {}
+        for name, slug, username in (("Tenant One Org", "tenant-one", "alice"),
+                                     ("Tenant Two Org", "tenant-two", "bob")):
+            org = Organization(name=name, slug=slug, plan="pro", status="active")
+            db.add(org)
+            db.flush()
+            if db.get(User, username) is None:
+                db.add(User(username=username, password_hash=auth.hash_password("Testpass123"),
+                            role="user"))
+                db.flush()
+            db.add(OrganizationMember(org_id=org.id, user=username, role="owner"))
+            orgs[username] = org.id
+        db.commit()
+        return orgs["alice"], orgs["bob"]
+
+
 with TestClient(app) as c:
+    org_a, org_b = _seed_orgs()
     # two projects; alice is a member of only P1, bob of only P2 (admin creates + assigns)
     p1 = c.post("/projects", json={"name": "Tenant One Tower"}, headers=ADMIN).json()["id"]
     p2 = c.post("/projects", json={"name": "Tenant Two Plaza"}, headers=ADMIN).json()["id"]
+    with SessionLocal() as db:  # attach each api-key-created project to its tenant's org
+        db.query(Project).filter(Project.id == p1).update({"org_id": org_a})
+        db.query(Project).filter(Project.id == p2).update({"org_id": org_b})
+        db.commit()
     for pid, user in ((p1, "alice"), (p2, "bob")):
         r = c.post(f"/projects/{pid}/members", json={"user": user, "role": "editor"}, headers=ADMIN)
         assert r.status_code < 300, (r.status_code, r.text[:200])

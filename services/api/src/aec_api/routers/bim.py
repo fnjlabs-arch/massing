@@ -11,9 +11,19 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
-from .. import audit, bcf_io, rbac, signing, storage, topic_lifecycle
+from .. import audit, bcf_io, billing, rbac, signing, storage, tiers, topic_lifecycle
+from ..bim_gate import require_bim_authoring
 from ..db import get_db
-from ..models import Attachment, Comment, DrawingMarkup, Project, ProjectMember, Topic, Viewpoint
+from ..models import (
+    Attachment,
+    Comment,
+    DrawingMarkup,
+    Organization,
+    Project,
+    ProjectMember,
+    Topic,
+    Viewpoint,
+)
 from ..rbac import current_user, require_identified, require_role
 from ..schemas import (
     AttachmentOut,
@@ -37,10 +47,70 @@ MAX_LOD_CLASSES = 500
 
 
 # --- projects ----------------------------------------------------------------
+def _resolve_create_org(db: Session, actor: str, requested_org_id: str | None) -> str | None:
+    """Resolve which org a new project belongs to (SaaS §1; RBAC on only).
+
+    - api-key (machine identity) and RBAC-off dev: unscoped, exactly as before (org NULL).
+    - exactly one org → use it (a body org_id is ignored, not trusted over membership).
+    - multiple orgs → the body must name one of the caller's orgs, else 400.
+    - no orgs → 403 "create an organization first" (signup creates the first org; Agent B).
+    The resolved org's project cap (trial = 1) is enforced here, before anything is created.
+    """
+    if not rbac.RBAC_ON or actor == "api-key":
+        return None
+    orgs = rbac.user_org_ids(db, actor)
+    if not orgs:
+        raise HTTPException(403, "create an organization first")
+    if len(orgs) == 1:
+        org_id = next(iter(orgs))
+    else:
+        if not requested_org_id or requested_org_id not in orgs:
+            raise HTTPException(
+                400, "org_id is required when you belong to more than one organization")
+        org_id = requested_org_id
+    _enforce_project_cap(db, org_id)
+    return org_id
+
+
+def _enforce_project_cap(db: Session, org_id: str) -> None:
+    """Trial cap: a trial org may own at most 1 project (tiers.limits_for). Best-effort under
+    concurrency — the count-then-create is not a lock, so two simultaneous creates at the cap
+    could both pass; the cap is a billing guard, not a uniqueness invariant, and the race only
+    ever over-grants a trial by one project (correctable by the billing agent's reconciliation).
+
+    Subscription state also gates creation (SadSha Build Pro §2): an org whose trial expired
+    without payment (past_due) or whose subscription ended (canceled) creates no new
+    projects until it pays. The status is refreshed first, so an org whose trial ended
+    overnight is caught here even before any webhook or read path recomputed it. This is
+    the only portal write the billing state machine blocks today — the read-only half of
+    past_due is follow-up work (see docs/saas/billing.md)."""
+    org = db.get(Organization, org_id)
+    if org is None:
+        raise HTTPException(400, "no such organization")
+    if billing.refresh_org_status(db, org):
+        # The expiry is a fact about time passing, not about this request — persist it
+        # even though creation is about to be refused, so the next read sees the same
+        # status (a 403 path never reaches the create's commit, and an uncommitted flush
+        # is rolled back when the request session closes).
+        db.commit()
+    if org.status in ("past_due", "canceled"):
+        raise HTTPException(
+            403, f"the organization subscription is {org.status}; upgrade to create projects")
+    limit = tiers.limits_for(org.plan).get("max_projects")
+    if limit is None:
+        return
+    owned = db.query(Project).filter(Project.org_id == org_id).count()
+    if owned >= limit:
+        raise HTTPException(
+            403, f"the {tiers.normalize(org.plan)} plan allows at most {limit} project(s); "
+                 "upgrade to create more")
+
+
 @router.post("/projects", response_model=ProjectOut, status_code=201)
 def create_project(body: ProjectIn, db: Session = Depends(get_db),
                    actor: str = Depends(current_user)):
-    p = Project(name=body.name, origin=body.origin, source_ifc=body.source_ifc)
+    org_id = _resolve_create_org(db, actor, body.org_id)
+    p = Project(name=body.name, origin=body.origin, source_ifc=body.source_ifc, org_id=org_id)
     db.add(p)
     db.flush()
     rbac.grant(db, p.id, actor, "admin", party_role="GC")  # creator: admin + GC party
@@ -417,6 +487,11 @@ def list_projects(limit: int = 500, offset: int = 0, db: Session = Depends(get_d
         from ..models import ProjectMember
         q = q.join(ProjectMember, ProjectMember.project_id == Project.id) \
              .filter(ProjectMember.user == user)
+        # SaaS: a membership alone is not enough — the project must also sit in one of the
+        # caller's orgs. Platform admins keep their membership view unfiltered by org: they are
+        # the only ones who may see legacy NULL-org projects. A caller with no orgs sees nothing.
+        if not rbac.is_platform_admin(db, user):
+            q = q.filter(Project.org_id.in_(rbac.user_org_ids(db, user)))
     projects = q.order_by(Project.name).offset(max(0, int(offset or 0))).limit(limit).all()
     return [_with_kind(p) for p in projects]
 
@@ -1202,7 +1277,7 @@ def model_lod_census(pid: str, max_elements: int = 5000, db: Session = Depends(g
     return {**result, "plan": lod.proxy_plan(result)}
 
 
-@router.post("/projects/{pid}/model/lod/proxy")
+@router.post("/projects/{pid}/model/lod/proxy", dependencies=[Depends(require_bim_authoring)])
 def model_lod_proxy(pid: str, classes: list[str] | None = Body(default=None, embed=True),
                     db: Session = Depends(get_db),
                     actor: str = Depends(require_role("editor"))):

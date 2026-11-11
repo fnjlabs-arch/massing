@@ -16,9 +16,26 @@ for f in ("./test_sec.db",):
 from fastapi.testclient import TestClient  # noqa: E402
 
 from aec_api import auth  # noqa: E402
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember  # noqa: E402
 
 BEARER = lambda t: {"Authorization": f"Bearer {t}"}  # noqa: E731
+
+
+def _seed_org(username: str) -> None:
+    """Tenancy fixture: the suite runs with RBAC on, so project creation needs the caller in
+    an org (SadSha Build Pro §1). The User row already exists (registered just above); this
+    only adds the org + membership. Plan pro — the suite is about auth hardening, not the
+    trial cap."""
+    with SessionLocal() as db:
+        org = Organization(name="Sec Builders", slug="sec-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        db.add(OrganizationMember(org_id=org.id, user=username, role="owner"))
+        db.commit()
+
 
 with TestClient(app) as c:
     # the public dev signing secret is detected (production must set AEC_AUTH_SECRET)
@@ -27,6 +44,7 @@ with TestClient(app) as c:
     # alice signs up (first account → admin) and logs in for a real signed token
     c.post("/auth/register", json={"username": "alice", "password": "supersecret"})
     tok = c.post("/auth/login", json={"username": "alice", "password": "supersecret"}).json()["token"]
+    _seed_org("alice")
     pid = c.post("/projects", json={"name": "Sec"}, headers=BEARER(tok)).json()["id"]
 
     # with her token, alice (project admin) can read members

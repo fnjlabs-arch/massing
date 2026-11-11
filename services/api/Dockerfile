@@ -91,6 +91,12 @@ COPY services/api/seed_demo.py /app/services/api/seed_demo.py
 # still builds the schema via create_all + _ensure_* (no cutover in this PR).
 COPY services/api/alembic.ini /app/services/api/alembic.ini
 COPY services/api/migrations /app/services/api/migrations
+# Production preflight (stdlib-only). The go-live checklist and docs/deploy.md tell the operator
+# to run `docker compose … run --rm api python /app/scripts/validate_prod_config.py` — but no
+# COPY ever put scripts/ into this image, so that command failed with "can't open file" on a
+# fresh deploy and the documented go/no-go gate could not run at all. Nothing caught it because
+# no CI job runs the compose stack. Copied here so the documented path exists in the image.
+COPY scripts/validate_prod_config.py /app/scripts/validate_prod_config.py
 
 # Node runtime + the IFC->Fragments converter so /publish can reconvert authored edits.
 # The API invokes the converter with `node <script>` (subprocess) — deps resolve from /app/node_modules

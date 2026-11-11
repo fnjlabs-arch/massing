@@ -346,12 +346,15 @@ function openLibrary(): void {
 async function openProfile(platformAdmin: boolean, tier: string, initial = "profile") {
   const cloud = await ensureCloudStatus();
   const pid = D.getProjectId();
-  const [{ openProfileSettings }] = await Promise.all([import("./profileSettings")]);
+  const [{ openProfileSettings }, { billingSectionFor }] = await Promise.all([
+    import("./profileSettings"), import("./signup"),
+  ]);
   openProfileSettings({
     identity: { ...ME, isAdmin: platformAdmin, tierLabel: cloud?.tier_label || tier },
     platformAdmin,
     cloud,
     tierLabel: cloud?.tier_label || tier.charAt(0).toUpperCase() + tier.slice(1),
+    billing: { build: billingSectionFor(D.api) },
     actions: {
       manageUsers: adminModal,
       auditLog: auditModal,

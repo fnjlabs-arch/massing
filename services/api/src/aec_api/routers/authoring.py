@@ -19,6 +19,7 @@ from sqlalchemy.orm import Session
 from starlette.concurrency import run_in_threadpool
 
 from .. import audit, storage
+from ..bim_gate import bim_access_for_caller, bim_access_for_project, require_bim_authoring
 from ..db import get_db
 from ..models import Project, ProjectModel
 from ..rbac import current_user, require_role
@@ -186,7 +187,7 @@ def propmap_detect(pid: str, db: Session = Depends(get_db), _: str = Depends(req
     return propmap.detect(open_model(p.source_ifc))
 
 
-@router.post("/projects/{pid}/propmap/plan")
+@router.post("/projects/{pid}/propmap/plan", dependencies=[Depends(require_bim_authoring)])
 def propmap_plan(pid: str, rules: list[dict] = Body(..., embed=True),
                  db: Session = Depends(get_db), _: str = Depends(require_role("editor"))):
     """W9-1 dry-run: how many elements each remap rule would touch, with before/after samples. No
@@ -212,7 +213,7 @@ def get_logistics(pid: str, db: Session = Depends(get_db), _: str = Depends(requ
     return {"resources": res, "summary": logistics.summary(res)}
 
 
-@router.put("/projects/{pid}/logistics")
+@router.put("/projects/{pid}/logistics", dependencies=[Depends(require_bim_authoring)])
 def put_logistics(pid: str, body: dict = Body(...), db: Session = Depends(get_db),
                   actor: str = Depends(require_role("editor"))):
     """Replace the site-logistics resource list."""
@@ -288,7 +289,7 @@ def get_layers(pid: str, db: Session = Depends(get_db), _: str = Depends(require
     return p.prop_layers or {"layers": []}
 
 
-@router.put("/projects/{pid}/layers")
+@router.put("/projects/{pid}/layers", dependencies=[Depends(require_bim_authoring)])
 def put_layers(pid: str, stack: dict = Body(...), db: Session = Depends(get_db),
                actor: str = Depends(require_role("editor"))):
     """Replace the layer stack. Pure data — nothing is written to the IFC until baked."""
@@ -352,7 +353,7 @@ def resolve_layers(pid: str, db: Session = Depends(get_db), _: str = Depends(req
     return _layers.resolve(stack, lookup)
 
 
-@router.post("/projects/{pid}/layers/bake")
+@router.post("/projects/{pid}/layers/bake", dependencies=[Depends(require_bim_authoring)])
 def bake_layers(pid: str, publish: bool = Body(default=True, embed=True),
                 db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
     """Flatten the resolved composition into the IFC (each effective override -> a GUID-stable pset
@@ -418,7 +419,7 @@ def family_types(key: str, _: str = Depends(current_user)):
         raise HTTPException(404, str(e)) from None
 
 
-@router.post("/projects/{pid}/families/import")
+@router.post("/projects/{pid}/families/import", dependencies=[Depends(require_bim_authoring)])
 async def import_families(pid: str, file: UploadFile = File(...), publish: bool = False,
                           db: Session = Depends(get_db),
                           actor: str = Depends(require_role("editor"))):
@@ -468,7 +469,7 @@ async def import_families(pid: str, file: UploadFile = File(...), publish: bool 
     return result
 
 
-@router.post("/projects/{pid}/families/import-pack")
+@router.post("/projects/{pid}/families/import-pack", dependencies=[Depends(require_bim_authoring)])
 def import_family_pack(pid: str, pack: str = Body(..., embed=True),
                        publish: bool = Body(default=False, embed=True),
                        db: Session = Depends(get_db),
@@ -566,7 +567,7 @@ def family_coverage(typology: str | None = None, _: str = Depends(current_user))
         raise HTTPException(400, str(e)) from e
 
 
-@router.post("/projects/{pid}/families/place")
+@router.post("/projects/{pid}/families/place", dependencies=[Depends(require_bim_authoring)])
 def place_family(pid: str, family: str = Body(..., embed=True),
                  position: list[float] | None = Body(default=None, embed=True),
                  storey: str | None = Body(default=None, embed=True),
@@ -609,7 +610,7 @@ def place_family(pid: str, family: str = Body(..., embed=True),
 _ai_author_throttle = rate_limited("draft", 30)          # the paid LLM path when a key is set
 
 
-@router.post("/projects/{pid}/ai/author")
+@router.post("/projects/{pid}/ai/author", dependencies=[Depends(require_bim_authoring)])
 def ai_author(pid: str, text: str = Body(..., embed=True),
               context: dict = Body(default={}, embed=True),
               db: Session = Depends(get_db), _: str = Depends(require_role("editor")),
@@ -646,7 +647,7 @@ def scene_digest(pid: str, db: Session = Depends(get_db), _: str = Depends(requi
     return scene.digest(open_model(p.source_ifc))
 
 
-@router.post("/projects/{pid}/edit/precheck")
+@router.post("/projects/{pid}/edit/precheck", dependencies=[Depends(require_bim_authoring)])
 def edit_precheck(pid: str, recipe: str = Body(..., embed=True), params: dict = Body(default={}, embed=True),
                   _: str = Depends(require_role("editor"))):
     """W11 E8: validate an edit's params against the authoring **guardrails** WITHOUT applying it —
@@ -657,7 +658,7 @@ def edit_precheck(pid: str, recipe: str = Body(..., embed=True), params: dict = 
     return guards.precheck(recipe, params)
 
 
-@router.post("/projects/{pid}/edit")
+@router.post("/projects/{pid}/edit", dependencies=[Depends(require_bim_authoring)])
 def edit(pid: str, recipe: str = Body(...), params: dict = Body(default={}),
          publish: bool = Body(default=False), base_source: str | None = Body(default=None),
          want_guid: str | None = Body(default=None),
@@ -729,7 +730,7 @@ def edit(pid: str, recipe: str = Body(...), params: dict = Body(default={}),
     return result
 
 
-@router.post("/projects/{pid}/edit/graph")
+@router.post("/projects/{pid}/edit/graph", dependencies=[Depends(require_bim_authoring)])
 def edit_graph(pid: str, graph: dict = Body(...), publish: bool = Body(default=False),
                base_source: str | None = Body(default=None), db: Session = Depends(get_db),
                actor: str = Depends(require_role("editor"))):
@@ -770,7 +771,7 @@ def edit_graph(pid: str, graph: dict = Body(...), publish: bool = Body(default=F
             **({"publish": result["publish"]} if "publish" in result else {})}
 
 
-@router.post("/projects/{pid}/edit/batch")
+@router.post("/projects/{pid}/edit/batch", dependencies=[Depends(require_bim_authoring)])
 def edit_batch(pid: str, steps: list[dict] = Body(...), publish: bool = Body(default=False),
                base_source: str | None = Body(default=None),
                db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
@@ -826,7 +827,7 @@ def macros_list(pid: str, db: Session = Depends(get_db), _: str = Depends(requir
     return {"macros": stored or mac.STARTER_MACROS, "seeded": not stored}
 
 
-@router.put("/projects/{pid}/macros")
+@router.put("/projects/{pid}/macros", dependencies=[Depends(require_bim_authoring)])
 def macros_put(pid: str, macros: list[dict] = Body(..., embed=True),
                db: Session = Depends(get_db), _: str = Depends(require_role("editor"))):
     """Replace the project's macro library. Every step's recipe name is validated against the edit
@@ -840,7 +841,7 @@ def macros_put(pid: str, macros: list[dict] = Body(..., embed=True),
     return {"saved": len(saved), "macros": saved}
 
 
-@router.post("/projects/{pid}/macros/{macro_id}/expand")
+@router.post("/projects/{pid}/macros/{macro_id}/expand", dependencies=[Depends(require_bim_authoring)])
 def macros_expand(pid: str, macro_id: str, args: dict = Body(default={}, embed=True),
                   db: Session = Depends(get_db), _: str = Depends(require_role("viewer"))):
     """Preview a macro's concrete step list for the given args WITHOUT touching the model — defaults fill
@@ -857,7 +858,7 @@ def macros_expand(pid: str, macro_id: str, args: dict = Body(default={}, embed=T
     return {"macro": macro_id, "name": macro.get("name"), "steps": steps, "step_count": len(steps)}
 
 
-@router.post("/projects/{pid}/macros/{macro_id}/run")
+@router.post("/projects/{pid}/macros/{macro_id}/run", dependencies=[Depends(require_bim_authoring)])
 def macros_run(pid: str, macro_id: str, args: dict = Body(default={}, embed=True),
                publish: bool = Body(default=False, embed=True),
                base_source: str | None = Body(default=None, embed=True),
@@ -933,7 +934,7 @@ def ffe_bom(pid: str, db: Session = Depends(get_db), _: str = Depends(require_ro
     return content.furniture_bom(open_model(p.source_ifc))
 
 
-@router.post("/projects/{pid}/content/import")
+@router.post("/projects/{pid}/content/import", dependencies=[Depends(require_bim_authoring)])
 async def content_import(pid: str, file: UploadFile = File(...), category: str = "", e: float = 0.0,
                          n: float = 0.0, scale: float = 1.0, name: str = "", storey: str = "",
                          publish: bool = True, db: Session = Depends(get_db),
@@ -996,7 +997,7 @@ async def content_import(pid: str, file: UploadFile = File(...), category: str =
     return result
 
 
-@router.post("/projects/{pid}/model/options")
+@router.post("/projects/{pid}/model/options", dependencies=[Depends(require_bim_authoring)])
 def option_snapshot(pid: str, name: str = Body(..., embed=True),
                     note: str | None = Body(default=None, embed=True),
                     db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
@@ -1028,7 +1029,7 @@ def option_list(pid: str, db: Session = Depends(get_db), _: str = Depends(requir
     return model_options.list_options(pid, p.source_ifc)
 
 
-@router.post("/projects/{pid}/model/options/{slug}/activate")
+@router.post("/projects/{pid}/model/options/{slug}/activate", dependencies=[Depends(require_bim_authoring)])
 def option_activate(pid: str, slug: str, publish: bool = Body(default=True, embed=True),
                     db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
     """E6: switch the project to an option branch. Goes through the same edit-history push as any
@@ -1073,7 +1074,7 @@ def option_diff(pid: str, slug: str, db: Session = Depends(get_db),
         raise HTTPException(404, str(e)) from e
 
 
-@router.delete("/projects/{pid}/model/options/{slug}")
+@router.delete("/projects/{pid}/model/options/{slug}", dependencies=[Depends(require_bim_authoring)])
 def option_delete(pid: str, slug: str, db: Session = Depends(get_db),
                   actor: str = Depends(require_role("editor"))):
     """E6: drop an option branch (the edit history is untouched)."""
@@ -1146,7 +1147,7 @@ def _restore_version(pid: str, db: Session, actor: str, publish: bool, redo: boo
     return out
 
 
-@router.post("/projects/{pid}/edit/undo")
+@router.post("/projects/{pid}/edit/undo", dependencies=[Depends(require_bim_authoring)])
 def edit_undo(pid: str, publish: bool = Body(default=True, embed=True), db: Session = Depends(get_db),
               actor: str = Depends(require_role("editor"))):
     """S4: **undo** the last authoring edit — restore the prior model version, republishing only when
@@ -1155,7 +1156,7 @@ def edit_undo(pid: str, publish: bool = Body(default=True, embed=True), db: Sess
     return _restore_version(pid, db, actor, publish, redo=False)
 
 
-@router.post("/projects/{pid}/edit/redo")
+@router.post("/projects/{pid}/edit/redo", dependencies=[Depends(require_bim_authoring)])
 def edit_redo(pid: str, publish: bool = Body(default=True, embed=True), db: Session = Depends(get_db),
               actor: str = Depends(require_role("editor"))):
     """S4: **redo** an undone edit — restore the next model version, republishing only when `publish`
@@ -1163,7 +1164,7 @@ def edit_redo(pid: str, publish: bool = Body(default=True, embed=True), db: Sess
     return _restore_version(pid, db, actor, publish, redo=True)
 
 
-@router.post("/projects/{pid}/edit-preview")
+@router.post("/projects/{pid}/edit-preview", dependencies=[Depends(require_bim_authoring)])
 def edit_preview(pid: str, recipe: str = Body(..., embed=True),
                  params: dict = Body(default={}, embed=True),
                  db: Session = Depends(get_db), _: str = Depends(require_role("editor"))):
@@ -1194,7 +1195,7 @@ def edit_preview(pid: str, recipe: str = Body(..., embed=True),
                     headers={"X-Element-Guid": guid or ""})
 
 
-@router.post("/projects/{pid}/publish", status_code=202)
+@router.post("/projects/{pid}/publish", status_code=202, dependencies=[Depends(require_bim_authoring)])
 def publish(pid: str, reconvert: bool = Body(default=True), db: Session = Depends(get_db),
             actor: str = Depends(require_role("editor"))):
     """Re-run the pipeline on the current source IFC, off the request thread. Returns immediately;
@@ -1216,7 +1217,7 @@ def publish(pid: str, reconvert: bool = Body(default=True), db: Session = Depend
     return {"state": "running", "reconvert": reconvert}
 
 
-@router.post("/projects/{pid}/source-ifc")
+@router.post("/projects/{pid}/source-ifc", dependencies=[Depends(require_bim_authoring)])
 async def upload_source_ifc(pid: str, file: UploadFile = File(...), publish: bool = True,
                             db: Session = Depends(get_db),
                             actor: str = Depends(require_role("editor"))):
@@ -1272,7 +1273,7 @@ def list_project_models(pid: str, db: Session = Depends(get_db),
              "created_at": m.created_at.isoformat() if m.created_at else None} for m in rows]
 
 
-@router.post("/projects/{pid}/models", status_code=201)
+@router.post("/projects/{pid}/models", status_code=201, dependencies=[Depends(require_bim_authoring)])
 async def add_project_model(pid: str, file: UploadFile = File(...), discipline: str = Form("Model"),
                             db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
     """Append a discipline IFC (STR / MEP / ARCH …) so it can take part in federated clash."""
@@ -1300,7 +1301,7 @@ async def add_project_model(pid: str, file: UploadFile = File(...), discipline: 
     return {"id": m.id, "discipline": m.discipline, "size": size}
 
 
-@router.post("/projects/{pid}/models/from-upload", status_code=201)
+@router.post("/projects/{pid}/models/from-upload", status_code=201, dependencies=[Depends(require_bim_authoring)])
 async def add_project_model_from_upload(pid: str, body: dict = Body(...),
                                         db: Session = Depends(get_db),
                                         actor: str = Depends(require_role("editor"))):
@@ -1358,7 +1359,7 @@ async def add_project_model_from_upload(pid: str, body: dict = Body(...),
     return {"id": m.id, "discipline": m.discipline, "size": size, "from_upload": True}
 
 
-@router.post("/projects/{pid}/raise-plan")
+@router.post("/projects/{pid}/raise-plan", dependencies=[Depends(require_bim_authoring)])
 async def raise_plan_to_bim(pid: str, file: UploadFile = File(...),
                             wall_height: float = Form(3.0), wall_thickness: float = Form(0.2),
                             preview: bool = Form(False),
@@ -1414,7 +1415,7 @@ async def raise_plan_to_bim(pid: str, file: UploadFile = File(...),
             "wall_height_m": stats["wall_height_m"], "wall_thickness_m": stats["wall_thickness_m"]}
 
 
-@router.delete("/projects/{pid}/models/{mid}")
+@router.delete("/projects/{pid}/models/{mid}", dependencies=[Depends(require_bim_authoring)])
 def delete_project_model(pid: str, mid: str, db: Session = Depends(get_db),
                          actor: str = Depends(require_role("editor"))):
     m = db.get(ProjectModel, mid)
@@ -1458,7 +1459,7 @@ def speckle_send(pid: str, db: Session = Depends(get_db), _: str = Depends(requi
         raise HTTPException(501, str(e)) from e
 
 
-@router.post("/projects/{pid}/import/rvt", status_code=202)
+@router.post("/projects/{pid}/import/rvt", status_code=202, dependencies=[Depends(require_bim_authoring)])
 async def import_rvt(pid: str, file: UploadFile = File(...), confirm_cost: bool = False,
                      publish: bool = True, db: Session = Depends(get_db),
                      actor: str = Depends(require_role("editor"))):
@@ -1651,3 +1652,31 @@ def publish_status(pid: str, _: str = Depends(require_role("viewer"))):
                 pass
         return s
     return {"state": "idle"}
+
+
+# --- BIM gating (SadSha Build Pro SaaS §5) --------------------------------------
+# Read-only entitlement snapshots for the web UI. They never gate anything
+# themselves — the API gate above is the enforcement point; these just let the
+# UI hide/disable authoring entry points instead of letting the user hit a 403.
+# GET /organizations/mine (Agent B, billing/signup) will carry the same
+# entitlements per org; these project/caller-scoped reads exist because the
+# "New model" entry point runs before any project exists to scope by.
+
+
+@router.get("/projects/{pid}/bim-access")
+def bim_access(pid: str, db: Session = Depends(get_db), user: str = Depends(current_user),
+               _: str = Depends(require_role("viewer"))):
+    """This project's BIM entitlement: plan, whether authoring is included, and the
+    Enterprise price. Open (bim_authoring True) in dev, for bypass identities, and
+    for projects with no org — matching what the gate would allow. Membership is
+    enforced by the require_role("viewer") gate above (route-authz guard): a
+    non-member must not learn another org's plan from this snapshot."""
+    return bim_access_for_project(db, pid, user)
+
+
+@router.get("/bim-access")
+def my_bim_access(db: Session = Depends(get_db), user: str = Depends(current_user)):
+    """The caller's BIM entitlement across their orgs: entitled if ANY org has
+    ``bim_authoring``. A caller with no org yet reports open — project creation
+    enforces org existence separately."""
+    return bim_access_for_caller(db, user)

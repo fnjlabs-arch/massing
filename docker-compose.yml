@@ -8,6 +8,9 @@
 # `deploy.resources.limits` is honored by `docker compose up` (v2); no Swarm required.
 services:
   postgres:
+    # Postgres 17 — the repo moved 16 → 17 in PR #69; the Remixer design doc says "Postgres 16",
+    # which is stale. Do not downgrade the pin without checking the migrations drift-guard
+    # (.github/workflows/db-migrations.yml, also postgres:17).
     image: postgres:17
     environment:
       POSTGRES_USER: "${POSTGRES_USER:-bim}"
@@ -16,7 +19,9 @@ services:
     ports: ["5432:5432"]
     volumes: ["postgres-data:/var/lib/postgresql/data"]
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bim"]
+      # Was hardcoded `-U bim`: renaming POSTGRES_USER in .env left postgres permanently
+      # `unhealthy`, and api/worker (depends_on: service_healthy) never started.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bim} -d ${POSTGRES_DB:-bim}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -29,7 +34,18 @@ services:
     # Pinned. An unpinned `minio/minio` resolves to :latest, so two developers -- or a developer and
     # CI -- can silently run different object stores, and a breaking upstream release arrives without
     # a commit. Dependabot's docker ecosystem keeps the pins fresh via PRs.
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    #
+    # IMAGE-AVAILABILITY WARNING (2026-11-11, hosting prep): upstream archived the minio/minio
+    # repository in April 2026 and the image was reported removed from Docker Hub in
+    # September–October 2026, so a fresh `docker compose pull` on a new VPS may fail with
+    # "repository does not exist / pull access denied" even though the tag below is pinned.
+    # No CI job in this repo pulls this image, so nothing here proves it still pulls.
+    # The image is therefore overridable without editing this file:
+    #   MINIO_IMAGE=pgsty/minio:RELEASE.2026-04-17T00-00-00Z   # community fork, same S3 API,
+    #   MINIO_IMAGE=quay.io/minio/minio:RELEASE.2025-09-07T16-13-09Z  # needs a Quay login since 24 Sep 2026
+    # Before relying on any of them, run `docker pull <image>` on the target VPS — see
+    # docs/saas/contabo-vps8.md §7. The default below is unchanged until a pull is proven.
+    image: "${MINIO_IMAGE:-minio/minio:RELEASE.2025-04-22T22-12-26Z}"
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: "${S3_ACCESS_KEY:-minioadmin}"
@@ -56,10 +72,24 @@ services:
       minio: { condition: service_healthy }
     environment: &api-env
       DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER:-bim}:${POSTGRES_PASSWORD:-bim}@postgres:5432/${POSTGRES_DB:-bim}"
-      S3_ENDPOINT: http://minio:9000
+      # Derived from POSTGRES_* above — there is no separate DATABASE_URL input in a compose
+      # deploy. Set DATABASE_URL itself only when running the API outside compose (see .env.example).
+      S3_ENDPOINT: "${S3_ENDPOINT:-http://minio:9000}"   # was hardcoded; override for external S3
       S3_ACCESS_KEY: "${S3_ACCESS_KEY:-minioadmin}"
       S3_SECRET_KEY: "${S3_SECRET_KEY:-minioadmin}"
       S3_BUCKET: "${S3_BUCKET:-aec-bim}"
+      # --- SadSha Build Pro SaaS (hosting prep, 2026-11-11) ---
+      # Plumbed now so the deploy doc, .env.example and the stack agree; the billing /
+      # tenancy code that reads these does NOT exist yet (Remixer Agents A/B/G own it),
+      # so empty defaults mean "SaaS features off" and change nothing today. Never put a
+      # real key in this file — values come from .env only.
+      SAAS_MODE: "${SAAS_MODE:-0}"                       # 1 = SaaS mode (org scoping + BIM gating); default off, dev unchanged
+      BILLING_PROVIDER: "${BILLING_PROVIDER:-lemonsqueezy}"
+      LEMONSQUEEZY_API_KEY: "${LEMONSQUEEZY_API_KEY:-}"
+      LEMONSQUEEZY_STORE_ID: "${LEMONSQUEEZY_STORE_ID:-}"
+      LEMONSQUEEZY_VARIANT_PRO: "${LEMONSQUEEZY_VARIANT_PRO:-}"
+      LEMONSQUEEZY_VARIANT_ENTERPRISE: "${LEMONSQUEEZY_VARIANT_ENTERPRISE:-}"
+      LEMONSQUEEZY_WEBHOOK_SECRET: "${LEMONSQUEEZY_WEBHOOK_SECRET:-}"
       AEC_RBAC: "${AEC_RBAC:-0}"                       # set 1 to enforce project roles
       AEC_API_KEY: "${AEC_API_KEY:-}"                  # bearer token = admin (set in prod)
       AEC_AUTH_SECRET: "${AEC_AUTH_SECRET:-}"          # signs login tokens (falls back to AEC_API_KEY)
@@ -74,7 +104,11 @@ services:
       APS_CLIENT_ID: "${APS_CLIENT_ID:-}"              # optional paid Autodesk RVT bridge
       APS_CLIENT_SECRET: "${APS_CLIENT_SECRET:-}"
     ports: ["8000:8000"]
-    volumes: ["ifc-data:/app/ifc"]   # uploaded source IFCs persist across restarts
+    # ifc-data: uploaded source IFCs. storage-data: the LocalBackend directory (STORAGE_DIR,
+    # /app/storage) — used whenever S3_ENDPOINT is unset. Without the named volume, local-file
+    # uploads lived in the container filesystem and vanished on every recreate. In the compose
+    # stack S3 is set, so this is defence-in-depth for anyone running without MinIO.
+    volumes: ["ifc-data:/app/ifc", "storage-data:/app/storage"]
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 5s
@@ -116,7 +150,9 @@ services:
     # which is worse than no signal, because it trains whoever is watching to ignore the column. The
     # comment above claimed there was no healthcheck; there was, inherited from the image.
     healthcheck: { disable: true }
-    volumes: ["ifc-data:/app/ifc"]   # same uploaded-IFC volume as the API — jobs re-parse those files
+    # Same two volumes as the API — jobs re-parse the uploaded IFCs, and a job that writes an
+    # object through the local backend must see the same storage dir.
+    volumes: ["ifc-data:/app/ifc", "storage-data:/app/storage"]
     profiles: ["full"]
     # deploy:                        # opt-in cap — size for your host; this is where the heavy parses
     #   resources:                   # now live, so it wants the generous limit the API no longer needs
@@ -139,9 +175,18 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+    # Was `service_started`: nginx came up before the API was ready and answered 502 on /api
+    # until the API finished booting. Gating on healthy costs nothing — Caddy retries anyway —
+    # and it is what the prod overlay's caddy service now gates on for the web itself.
     depends_on:
-      api: { condition: service_started }
+      api: { condition: service_healthy }
     ports: ["${WEB_PORT:-8080}:80"]
+    # nginx:alpine is Alpine-based, so busybox wget is present; there is no curl in the image.
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     profiles: ["full"]
     # deploy:                              # opt-in cap — uncomment + size for your host
     #   resources:                         # nginx serving static assets — modest footprint
@@ -152,6 +197,10 @@ services:
     build:
       context: .
       dockerfile: services/converter/Dockerfile
+    # `./data` does NOT exist in the repo: compose auto-creates a missing bind-mount host
+    # directory as root, and this image runs as non-root appuser (uid 10001), so the first
+    # `run --rm converter` can fail writing its .frag output. Pre-create it before first use:
+    #   mkdir -p data && sudo chown 10001:10001 data
     volumes: ["./data:/data"]            # drop IFCs here; .frag written here
     profiles: ["tools"]                  # job-style: `docker compose run --rm converter ...`
     # deploy:                              # opt-in cap — uncomment + size for your host
@@ -164,3 +213,6 @@ volumes:
   postgres-data:
   minio-data:
   ifc-data:
+  storage-data:   # local-file object storage (STORAGE_DIR) — see the api service note above
+  # NOTE: caddy-data / caddy-config (TLS certs + config) live in docker-compose.prod.yml, which
+  # is the only file that runs Caddy. scripts/backup.sh backs them up with the rest.

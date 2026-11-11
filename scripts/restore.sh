@@ -23,8 +23,11 @@ printf '\nThis OVERWRITES the running stack. Type YES to continue: '
 read -r confirm
 [ "$confirm" = "YES" ] || { echo "aborted"; exit 1; }
 
-echo "==> Stopping app (api, web) to quiesce writes"
-$DC stop api web || true
+echo "==> Stopping app (api, web, worker) to quiesce writes"
+# The worker MUST stop too: it was omitted before, so a restore could run while the
+# worker kept writing jobs to the database being overwritten — and its in-memory queue
+# state then disagreed with the restored rows. It is started again at the end.
+$DC stop api web worker || true
 
 echo "==> Restoring Postgres ($PGDB)"
 gunzip -c "$STAGE/db.sql.gz" | $DC exec -T postgres psql -U "$PGUSER" -d "$PGDB" -q
@@ -44,6 +47,14 @@ if [ -n "$API_CID" ] && [ -f "$STAGE/ifc-data.tgz" ]; then
     sh -c 'rm -rf /app/ifc/* && tar xzf /bak/ifc-data.tgz -C /app/ifc'
 fi
 
+CADDY_CID="$($DC ps -q caddy 2>/dev/null || true)"
+if [ -n "$CADDY_CID" ] && [ -f "$STAGE/caddy-data.tgz" ]; then
+  echo "==> Restoring Caddy TLS data (replace)"
+  docker run --rm --volumes-from "$CADDY_CID" -v "$STAGE":/bak alpine \
+    sh -c 'rm -rf /data/* && tar xzf /bak/caddy-data.tgz -C /data'
+  $DC restart caddy
+fi
+
 echo "==> Bringing the app back up"
-$DC start api web
+$DC start api web worker
 echo "==> Restore complete. Verify: curl -s localhost:8000/health"

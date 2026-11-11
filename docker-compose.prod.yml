@@ -28,11 +28,19 @@ services:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
-    depends_on: [web]
+    # Was `depends_on: [web]` (service_started): Caddy came up while nginx was still
+    # starting and served 502s on first boot. The base file now healthchecks web, so gate on it.
+    depends_on:
+      web: { condition: service_healthy }
     profiles: ["full"]
 
   web:
     restart: unless-stopped
+    # Caddy is the only public entrypoint. The base file publishes the web port on 0.0.0.0,
+    # which puts the nginx container (and through it /api) on the public internet of the
+    # VPS — reachable the moment UFW is misconfigured or off. Bind it to localhost; Caddy
+    # reaches web over the Docker network, and local debugging still works.
+    ports: ["127.0.0.1:${WEB_PORT:-8080}:80"]
 
   # Shared store for per-IP rate limiting + login-lockout counters across the API's uvicorn workers
   # (the base stack runs UVICORN_WORKERS=4; without Redis those counters are per-process).
@@ -49,6 +57,10 @@ services:
 
   api:
     restart: unless-stopped
+    # Localhost-only, like every other internal port in this overlay (see web above):
+    # the API must never be reachable except through Caddy. Local checks
+    # (curl localhost:8000/health, scripts/smoke-stack.sh) still work.
+    ports: ["127.0.0.1:8000:8000"]
     depends_on:
       redis: { condition: service_healthy }
     environment:
@@ -97,6 +109,9 @@ services:
 
   postgres:
     restart: unless-stopped
+    # Localhost-only: the database must never listen on the public interface.
+    # scripts/backup.sh / restore.sh use `docker compose exec`, not this port.
+    ports: ["127.0.0.1:5432:5432"]
     environment:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env for production}"
     # deploy:                              # opt-in cap — uncomment + size for your host
@@ -106,6 +121,9 @@ services:
 
   minio:
     restart: unless-stopped
+    # Localhost-only: the S3 API and the console must never listen on the public
+    # interface. The console stays reachable for the operator via SSH port-forward.
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
     environment:
       MINIO_ROOT_PASSWORD: "${S3_SECRET_KEY:?set S3_SECRET_KEY in .env for production}"
     # deploy:                              # opt-in cap — uncomment + size for your host

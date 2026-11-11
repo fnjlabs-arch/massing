@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session
 
 from . import auth
 from .db import get_db
-from .models import ProjectMember
+from .models import OrganizationMember, Project, ProjectMember, User
 
 ROLE_ORDER = {"viewer": 0, "reviewer": 1, "editor": 2, "admin": 3}
 RBAC_ON = os.environ.get("AEC_RBAC") == "1"
@@ -77,6 +77,45 @@ def current_user(x_user: str | None = Header(default=None),
     return "anonymous"          # non-member → no project role → 403 on protected routes
 
 
+def user_org_ids(db: Session, user: str) -> set[str]:
+    """The org ids `user` belongs to (OrganizationMember). Empty set = no org — a caller who
+    has never joined (or been added to) an organization. Pure lookup, no gating of its own."""
+    rows = db.query(OrganizationMember.org_id).filter(OrganizationMember.user == user).all()
+    return {r[0] for r in rows}
+
+
+def is_platform_admin(db: Session, user: str) -> bool:
+    """Whether `user` is a platform (ops) admin — AEC_ADMIN_EMAILS or the legacy global admin
+    role. Deferred import: routers/auth imports rbac, so importing it at module top would be a
+    cycle; require_platform_admin below uses the same deferred shape. The api-key identity is
+    NOT a platform admin here — it has its own bypass everywhere and no User row to check."""
+    if user in ("api-key", "anonymous", None, ""):
+        return False
+    from .routers.auth import _is_platform_admin as _check
+    return _check(db.get(User, user))
+
+
+def _check_project_org(db: Session, user: str, pid: str) -> None:
+    """Multi-tenancy gate, applied AFTER the project-role check (in require_role and
+    authorize_pid): the project's org must be one of the caller's orgs. The api-key identity
+    and platform admins bypass it — the api-key is the existing global pass, and platform
+    admins are the only ones who may see LEGACY projects (org_id NULL = created before
+    tenancy, or created by the api-key with no org to attach). A non-admin member of a legacy
+    project gets 403 here even though the role check passed: project membership alone no
+    longer grants access to a project outside the caller's orgs. Raises 403, else returns.
+
+    Only enforced when RBAC is on — the callers check RBAC_ON first, so dev (RBAC off) never
+    reaches this and its behaviour does not change.
+    """
+    if user == "api-key" or is_platform_admin(db, user):
+        return
+    p = db.get(Project, pid)
+    if p is None:
+        return  # no project to scope; the caller's own lookup raises 404/403 as before
+    if p.org_id is None or p.org_id not in user_org_ids(db, user):
+        raise HTTPException(403, "project belongs to another organization")
+
+
 def role_for(db: Session, project_id: str, user: str) -> str | None:
     if user == "api-key":
         return "admin"
@@ -97,6 +136,7 @@ def require_role(min_role: str):
             raise HTTPException(
                 status_code=403,
                 detail=f"requires {min_role} on project (user {user!r} has {role or 'no'} role)")
+        _check_project_org(db, user, pid)
         return user
 
     dep._role_gate = min_role   # tag so the route-authz guard test can detect the membership check
@@ -134,6 +174,7 @@ def authorize_pid(db: Session, user: str, pid: str, min_role: str = "viewer") ->
         raise HTTPException(
             status_code=403,
             detail=f"requires {min_role} on project (user {user!r} has {role or 'no'} role)")
+    _check_project_org(db, user, pid)
     return user
 
 
@@ -251,11 +292,20 @@ def consume_stepup(db: Session, token: str, act: str, pw_hash: str, actor: str) 
 def member_project_ids(db: Session, user: str) -> set[str] | None:
     """The set of project ids the caller may see in a cross-project roll-up. Returns None when RBAC is
     off (dev) or for the api-key/admin identity, meaning "no restriction". Otherwise only the projects
-    the user is a member of — so portfolio aggregations never leak other tenants' data."""
+    the user is a member of AND whose org is one of the user's orgs — so portfolio aggregations never
+    leak other tenants' data. A platform admin's memberships are returned unfiltered by org (they are
+    the only ones who may see legacy NULL-org projects); a non-admin with no orgs sees nothing here,
+    even for projects they are a member of, because those projects sit outside every org they belong
+    to."""
     if not RBAC_ON or user == "api-key":
         return None
-    rows = db.query(ProjectMember.project_id).filter(ProjectMember.user == user).all()
-    return {r[0] for r in rows}
+    q = db.query(ProjectMember.project_id).filter(ProjectMember.user == user)
+    if is_platform_admin(db, user):
+        return {r[0] for r in q.all()}
+    orgs = user_org_ids(db, user)
+    q = (q.join(Project, Project.id == ProjectMember.project_id)
+          .filter(Project.org_id.in_(orgs)))
+    return {r[0] for r in q.all()}
 
 
 def party_role_for(db: Session, project_id: str, user: str) -> str | None:

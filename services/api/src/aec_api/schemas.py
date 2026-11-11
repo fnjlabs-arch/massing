@@ -13,6 +13,10 @@ class ProjectIn(BaseModel):
     name: str
     origin: dict[str, Any] | None = None
     source_ifc: str | None = None
+    # SaaS multi-tenancy: the org the new project belongs to. Only read when RBAC is on and the
+    # caller belongs to more than one org (then it is required); with exactly one org it is
+    # ignored in favour of that org, and with RBAC off it is ignored entirely (dev unchanged).
+    org_id: str | None = None
 
 
 class ProjectPatch(BaseModel):

@@ -8,7 +8,7 @@ list — the useful path through these documents is not alphabetical.
 | **Run it for the first time** | [Getting started](getting-started.md) |
 | **Learn to use it** | [User guide](user-guide/) — start with [the seven rooms](user-guide/rooms.md) |
 | **See it demoed** | [Walkthrough](walkthrough.md) — a 3-minute script, or a written click-through |
-| **Deploy it for real** | [Deployment](deploy.md) → [go-live checklist](PRODUCTION_CHECKLIST.md) → [operator runbook](operations.md) |
+| **Deploy it for real** | [Deployment](deploy.md) → [go-live checklist](PRODUCTION_CHECKLIST.md) → [operator runbook](operations.md) · Contabo VPS 8 walkthrough for SadSha Build Pro: [saas/contabo-vps8.md](saas/contabo-vps8.md) |
 | **Call the API** | [API reference](reference/api.md), or `/docs` on any running instance |
 | **Understand how it is built** | [Architecture](reference/architecture.md) · [client vs server](client-vs-server.md) · [drawings & sheets](drawings.md) |
 | **Add a record type** | [Authoring a module](authoring-modules.md) — no code required |
@@ -54,6 +54,7 @@ list — the useful path through these documents is not alphabetical.
 | Document | What it covers |
 | --- | --- |
 | [deploy.md](deploy.md) | The full stack: compose services, storage, auth model, hardening. |
+| [saas/contabo-vps8.md](saas/contabo-vps8.md) | Contabo VPS 8 deployment guide for SadSha Build Pro: server, Docker, Caddy, firewall, backups, runbook. |
 | [PRODUCTION_CHECKLIST.md](PRODUCTION_CHECKLIST.md) | Copy-paste gate to run before exposing a deployment. |
 | [operations.md](operations.md) | Day-2 operator runbook: health, flags, common incidents. |
 | [ops-dr.md](ops-dr.md) | Backup, restore, disaster recovery — and how a restore is *proven*. |

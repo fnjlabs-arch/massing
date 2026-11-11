@@ -34,10 +34,17 @@ for _f in ("./test_version_approve_identity.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from aec_api import rbac  # noqa: E402
+from aec_api import auth, rbac  # noqa: E402
 from aec_api.db import Base, SessionLocal, engine  # noqa: E402
 from aec_api.main import app  # noqa: E402
-from aec_api.models import ModelVersion, Project, ProjectMember  # noqa: E402
+from aec_api.models import (  # noqa: E402
+    ModelVersion,
+    Organization,
+    OrganizationMember,
+    Project,
+    ProjectMember,
+    User,
+)
 
 Base.metadata.create_all(bind=engine)
 client = TestClient(app)
@@ -67,7 +74,20 @@ def seed(pid: str, version: int, status: str = "draft") -> None:
 
 db = SessionLocal()
 try:
-    db.add(Project(id="p-approve", name="Approval Identity"))
+    # Tenancy fixture: the suite runs with RBAC on, so dana needs an org and the directly
+    # seeded project needs that org_id, or the org gate (SadSha Build Pro §1) refuses the
+    # very editor this suite is about. Plan pro — the suite is about approval identity,
+    # not the trial cap.
+    org = Organization(name="Approval Builders", slug="approval-builders", plan="pro",
+                       status="active")
+    db.add(org)
+    db.flush()
+    if db.get(User, "dana") is None:
+        db.add(User(username="dana", password_hash=auth.hash_password("Testpass123"),
+                    role="user"))
+        db.flush()
+    db.add(OrganizationMember(org_id=org.id, user="dana", role="owner"))
+    db.add(Project(id="p-approve", name="Approval Identity", org_id=org.id))
     db.add(ProjectMember(project_id="p-approve", user="dana", role="editor"))
     db.commit()
 finally:

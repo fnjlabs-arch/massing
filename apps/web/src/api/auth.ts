@@ -33,7 +33,7 @@
  *  a method is invisible to it, losing one fails it by number.
  */
 import { HttpCore, HttpError } from "./httpCore";
-import type { AccountUser, AuditEntry, IntegrationGroup, ProjectMember, ProjectRole } from "./types";
+import type { AccountUser, AuditEntry, BimAccess, IntegrationGroup, ProjectMember, ProjectRole } from "./types";
 
 type Ctor<T> = new (...args: any[]) => T;
 
@@ -147,6 +147,16 @@ export function withAuth<TBase extends Ctor<HttpCore>>(Base: TBase) {
   myRole(pid: string) {
     return this.json<{ user: string; role: ProjectRole | null; party_role: string | null; rbac: boolean }>(
       `/projects/${pid}/me`);
+  }
+  /** This project's BIM access: its plan, and whether BIM authoring is included.
+   *  Drives the viewer/authoring gating in main.ts. */
+  bimAccess(pid: string) {
+    return this.json<BimAccess>(`/projects/${pid}/bim-access`);
+  }
+  /** The caller's BIM access across their orgs — for entry points that run
+   *  before any project exists (e.g. "New model from scratch"). */
+  myBimAccess() {
+    return this.json<BimAccess>(`/bim-access`);
   }
   /** Project members roster — who is on this project, and in what role. */
   members(pid: string) {

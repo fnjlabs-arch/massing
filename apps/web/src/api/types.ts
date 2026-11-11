@@ -116,6 +116,20 @@ export interface ResolveAction {
 /** Project-scoped capability role, least→most privileged. */
 export type ProjectRole = "viewer" | "reviewer" | "editor" | "admin";
 
+/** BIM entitlement (SadSha Build Pro §5) — the wire shape of GET /bim-access and
+ *  GET /projects/{pid}/bim-access. Project-scoped reads carry `plan` (that
+ *  project's org); the caller-scoped read carries `plans` (all their orgs).
+ *  `bim_authoring` is the Enterprise flag; `enterprise_price_monthly` is the
+ *  configured price (default 399) so the UI never hardcodes the number. */
+export interface BimAccess {
+  project_id?: string;
+  plan?: string | null;
+  plans?: string[];
+  bim_authoring: boolean;
+  enterprise_price_monthly: number;
+  saas_mode: boolean;
+}
+
 /** One admin integration setting (AI/email/SSO). Secret values are never sent to the client. */
 export interface IntegrationKey {
   key: string; label: string; secret: boolean; configured: boolean; value?: string;

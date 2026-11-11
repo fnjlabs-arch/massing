@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from .. import audit, design_phase, pid_lock, soft_costs, storage
 from ..apppaths import add_data_src_to_path
+from ..bim_gate import require_bim_authoring
 from ..db import get_db
 from ..models import Project
 from ..proforma.solve import solve
@@ -259,7 +260,7 @@ class BlankModelIn(BaseModel):
     storey_height: float = Field(default=3.5, gt=2.0, le=10.0)
 
 
-@router.post("/projects/{pid}/model/blank")
+@router.post("/projects/{pid}/model/blank", dependencies=[Depends(require_bim_authoring)])
 def create_blank_model(pid: str, body: BlankModelIn, db: Session = Depends(get_db),
                        actor: str = Depends(require_role("editor"))):
     """Create a **blank authoring model** for the project — base IFC + `storeys` levels + a
@@ -289,7 +290,7 @@ def create_blank_model(pid: str, body: BlankModelIn, db: Session = Depends(get_d
             "source_ifc": str(ifc_path), "publish": "running"}
 
 
-@router.post("/projects/{pid}/generate/massing")
+@router.post("/projects/{pid}/generate/massing", dependencies=[Depends(require_bim_authoring)])
 def generate_massing(pid: str, body: MassingIn, db: Session = Depends(get_db),
                      actor: str = Depends(require_role("editor"))):
     """Generate an IFC massing model from a zoning envelope, set it as the project's source IFC,
@@ -551,7 +552,7 @@ def compute_massing_only(body: MassingIn) -> dict:
     return compute_massing(body.model_dump())
 
 
-@router.post("/projects/{pid}/model/ensure")
+@router.post("/projects/{pid}/model/ensure", dependencies=[Depends(require_bim_authoring)])
 def ensure_model(pid: str, storeys: int = 3, storey_height: float = 3.5,
                  db: Session = Depends(get_db), actor: str = Depends(require_role("editor"))):
     """R28-UNIFY — opening a project guarantees there is something to draw on.

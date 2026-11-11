@@ -11,11 +11,34 @@ for f in ("./rbac_test.db",):
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from aec_api import auth  # noqa: E402
+from aec_api.db import SessionLocal  # noqa: E402
 from aec_api.main import app  # noqa: E402
+from aec_api.models import Organization, OrganizationMember, User  # noqa: E402
 
 H = lambda u: {"X-User": u}  # noqa: E731
 
+
+def _seed_org():
+    """Tenancy fixture: the suite runs with RBAC on, so project creation/access needs the
+    caller in an org (SadSha Build Pro §1). One pro org holding alice (owner) + bob (member);
+    the suite is about project roles, not the trial cap, so the plan is pro."""
+    with SessionLocal() as db:
+        org = Organization(name="RBAC Builders", slug="rbac-builders", plan="pro",
+                           status="active")
+        db.add(org)
+        db.flush()
+        for username, role in (("alice", "owner"), ("bob", "member")):
+            if db.get(User, username) is None:
+                db.add(User(username=username, password_hash=auth.hash_password("Testpass123"),
+                            role="user"))
+                db.flush()
+            db.add(OrganizationMember(org_id=org.id, user=username, role=role))
+        db.commit()
+
+
 with TestClient(app) as c:
+    _seed_org()
     # alice creates a project -> becomes admin
     pid = c.post("/projects", json={"name": "Secure"}, headers=H("alice")).json()["id"]
     members = c.get(f"/projects/{pid}/members", headers=H("alice")).json()
